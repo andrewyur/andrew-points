@@ -1,4 +1,4 @@
-import { Google } from "arctic";
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "$env/static/private";
+import { Discord } from "arctic";
+import { DISCORD_CLIENT_SECRET, DISCORD_CLIENT_ID } from "$env/static/private";
 
-export const google = new Google(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, "http://localhost:5173/login/google/callback");
+export const discord = new Discord(DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, "http://localhost:5173/login/discord/callback")

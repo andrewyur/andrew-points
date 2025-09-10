@@ -2,14 +2,13 @@ import { sqliteTable, integer, text, uniqueIndex } from 'drizzle-orm/sqlite-core
 
 export const user = sqliteTable('user', {
 	id: text('id').notNull().primaryKey(),
-	googleId: text('google_id').notNull().unique(),
+	discordId: text('discord_id').notNull().unique(),
 	points: integer('points').notNull().default(0),
-	name: text('name').notNull(),
-	email: text('email').notNull(),
-	picture: text('picture').notNull(),
+	username: text('username').notNull(),
+	picture: text('picture'),
 	admin: integer('admin', { mode: 'boolean' }).notNull().default(false),
 }, (table) => [
-	uniqueIndex('google_id_index').on(table.googleId)
+	uniqueIndex('discord_id_index').on(table.discordId)
 ]);
 
 export const session = sqliteTable('session', {
