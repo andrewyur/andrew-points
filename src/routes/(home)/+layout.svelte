@@ -5,7 +5,8 @@
 </script>
 
 <div>
-    <h1>Lodge Points</h1>
+    <a href="/">Lodge Points</a>
+    <a href="/redeem">Redeem</a>
     <form method="post" action="/logout" use:enhance>
         <button>Sign out</button>
     </form>
@@ -23,7 +24,8 @@
         flex-direction: row;
         justify-content: space-between;
         padding: 10px;
-        background-color: blue;
+        background-color: purple;
         box-sizing: border-box;
+        align-items: center;
     }
 </style>

@@ -5,13 +5,17 @@ mini economy for lodge
 ## features
 
 - [x] discord oauth
-- [ ] redeem page
+- [x] redeem page
 - [ ] bounty page
   - [ ] create bounty interface
-  - [ ] list bounty interface
+  - [ ] list bounty page
   - [ ] accept bounty interface
   - [ ] confirm completion interface
   - [ ] admin verification notification
+- [ ] offers page
+  - [ ] create offer interface
+  - [ ] list offers page
+  - [ ] buy offer interface
 - [ ] trade page
   - [ ] create trades
   - [ ] trade notification
@@ -26,4 +30,4 @@ mini economy for lodge
   - [ ] your notifications
 - [ ] admin accounts
   - [ ] manipulate people's points
-  - [ ] confirm bounties
+  - [ ] list active bounties

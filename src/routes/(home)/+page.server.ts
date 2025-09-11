@@ -11,11 +11,11 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
 	increment: async (event) => {
 		const user = requireLogin()
-		await userPointsAddSubtract(user.id, 1)
+		await userPointsAddSubtract(user.id, 100)
 	},
 	decrement: async (event) => {
 		const user = requireLogin()
-		await userPointsAddSubtract(user.id, -1)
+		await userPointsAddSubtract(user.id, -100)
 	}
 };
 
