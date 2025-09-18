@@ -1,5 +1,5 @@
 import { encodeBase32LowerCase } from "@oslojs/encoding";
-import { db } from "./db";
+import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
 
 export async function createUser(discordId: string, username: string, avatarHash: string | null): Promise<table.User> {

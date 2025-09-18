@@ -1,7 +1,7 @@
 import { discord } from "$lib/server/oauth";
-import { createUser, getUserFromDiscordId, updateUserAvatar } from "$lib/server/user";
+import { createUser, getUserFromDiscordId, updateUserAvatar } from "./user";
 import type { RequestEvent } from "@sveltejs/kit";
-import { decodeIdToken, type OAuth2Tokens } from "arctic";
+import type { OAuth2Tokens } from "arctic";
 import * as auth from "$lib/server/auth"
 
 export async function GET(event: RequestEvent): Promise<Response> {

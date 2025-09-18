@@ -6,28 +6,37 @@ mini economy for lodge
 
 - [x] discord oauth
 - [x] redeem page
-- [ ] bounty page
-  - [ ] create bounty interface
-  - [ ] list bounty page
-  - [ ] accept bounty interface
-  - [ ] confirm completion interface
-  - [ ] admin verification notification
+- [ ] transaction ledger
+- [x] bounty page
+  - [x] create bounty interface
+  - [x] list bounty page
+  - [x] complete bounty interface
 - [ ] offers page
   - [ ] create offer interface
   - [ ] list offers page
   - [ ] buy offer interface
 - [ ] trade page
   - [ ] create trades
-  - [ ] trade notification
+- [ ] earn page
+  - [ ] create some menial task that ties points to physical work
 - [ ] statistics page
   - [ ] recent activity
   - [ ] total points in circulation
+  - [ ] leaderboard
 - [ ] discord bot
-  - [ ] notification
+  - [ ] notifications for every action
 - [ ] home page
+  - [ ] notifications
   - [ ] your points
   - [ ] your recent activity
   - [ ] your notifications
+  - [ ] display user's ledger
 - [ ] admin accounts
   - [ ] manipulate people's points
+    - [ ] send notification
   - [ ] list active bounties
+  - [ ] ban / timeout discord users
+  - [ ] revert ledger actions
+- [ ] style pages
+  - prioritizing mobile view
+- [ ] logger with file transport

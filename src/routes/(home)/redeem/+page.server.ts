@@ -29,6 +29,18 @@ const redeemableItems: Redeemable[] = [
         redeemMessage: "Miles will be contacting you shortly.",
         cost: 150,
     },
+    {
+        name: "Wear Andrew's Clothes for the day",
+        description: "Pick an outfit for from andrew's closet to wear for the day",
+        redeemMessage: "Andrew will be reaching out to you shortly",
+        cost: 200
+    },
+    {
+        name: "Best Friend Photoshoot & Instagram Post",
+        description: "Have a best friend themed photoshoot with andrew, and get a post announcing you are andrew's new best friend on instagram",
+        redeemMessage: "Andrew will be reaching out to you shortly. Think of some ideas for pictures",
+        cost: 500
+    }
 ]
 
 export const load: PageServerLoad = (event) => {
@@ -50,11 +62,11 @@ export const actions: Actions = {
         const redeemedItem = redeemableItems.find((r) => r.name === redeemedName)
 
         if (!redeemedItem) {
-            return fail(400, { error: "No redeemable items exist with the provided name" })
+            return fail(400, "No redeemable items exist with the provided name")
         }
 
         if (locals.user.points < redeemedItem.cost) {
-            return fail(400, { error: "You do not have enough points to redeem this item" })
+            return fail(400, "You do not have enough points to redeem this item")
         }
 
         if (redeemedItem) {
