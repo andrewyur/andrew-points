@@ -8,7 +8,7 @@
 <h1>Hi, {data.user.username}!</h1>
 <img src={data.user.picture} height="100px" width="100px" alt="profile" />
 
-<p>you have {data.user.points} points.</p>
+<p>you have {data.userPoints} points.</p>
 <form method="POST" use:enhance>
 	<button type="submit" formaction="?/increment">add</button>
 	<button type="submit" formaction="?/decrement">subtract</button>

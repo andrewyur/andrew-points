@@ -1,6 +1,7 @@
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { createBounty, createBountySubmission, getBounties } from "./bounties";
+import { getUserPoints } from "$lib/server/points";
 
 export const load: PageServerLoad = async (event) => {
     if (!event.locals.user) {
@@ -10,6 +11,7 @@ export const load: PageServerLoad = async (event) => {
     return {
         bounties: await getBounties(event.locals.user.id),
         user: event.locals.user,
+        userPoints: await getUserPoints(event.locals.user.id)
     }
 }
 
@@ -43,19 +45,15 @@ export const actions: Actions = {
 
         const formData = await request.formData()
 
-        const media = formData.get("media")
-        const bounty = formData.get("bounty")
+        const formFile = formData.get("media")
+        const formBountyId = formData.get("bounty")
 
-        if (media === null || !bounty) {
+        if (formFile === null || formBountyId === null) {
             return fail(400, "an input was missing in form data")
         }
 
-        const file = media as File;
-        const bountyId = Number(bounty);
-
-        if (Number.isNaN(bountyId)) {
-            return fail(400, "Non-number submitted as bounty id")
-        }
+        const file = formFile as File;
+        const bountyId = formBountyId as string;
 
         const bounties = await getBounties(locals.user.id)
 

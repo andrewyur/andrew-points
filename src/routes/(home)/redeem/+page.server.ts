@@ -1,7 +1,7 @@
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { notifyAdmins, publicNotification } from "$lib/server/notifications";
-import { userPointsAddSubtract } from "$lib/server/points";
+import { getUserPoints, createTransaction } from "$lib/server/points";
 
 export type Redeemable = {
     name: string,
@@ -43,12 +43,12 @@ const redeemableItems: Redeemable[] = [
     }
 ]
 
-export const load: PageServerLoad = (event) => {
+export const load: PageServerLoad = async (event) => {
     if (!event.locals.user) {
         return redirect(302, "/login");
     }
 
-    return { redeemableItems, user: event.locals.user }
+    return { redeemableItems, user: event.locals.user, userPoints: await getUserPoints(event.locals.user.id) }
 }
 
 export const actions: Actions = {
@@ -65,12 +65,17 @@ export const actions: Actions = {
             return fail(400, "No redeemable items exist with the provided name")
         }
 
-        if (locals.user.points < redeemedItem.cost) {
+        const userPoints = await getUserPoints(locals.user.id)
+
+        if (userPoints < redeemedItem.cost) {
             return fail(400, "You do not have enough points to redeem this item")
         }
 
         if (redeemedItem) {
-            userPointsAddSubtract(locals.user.id, -redeemedItem.cost);
+            await createTransaction(locals.user.id, -redeemedItem.cost, {
+                type: "redeemed_reward",
+                note: redeemedItem.name
+            })
             publicNotification(`${locals.user.username} redeemed ${redeemedItem.cost} for ${redeemedItem.name}!`);
             notifyAdmins(`User ${locals.user.username} redeemed ${redeemedItem.name}. Contact them with details soon`);
         }

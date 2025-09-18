@@ -9,7 +9,7 @@
     let createModal: HTMLDialogElement;
     let submitModal: HTMLDialogElement;
 
-    let activeBounty: number | null = $state(null);
+    let activeBounty: string | null = $state(null);
 
     const threeDaysLater = new Date();
     threeDaysLater.setDate(threeDaysLater.getDate() + 3);
@@ -126,7 +126,7 @@
                 required
                 type="number"
                 min="0"
-                max={data.user.points}
+                max={data.userPoints}
             />
         </label>
         <button type="submit" aria-label="create">Create</button>

@@ -1,6 +1,6 @@
 import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
-import { userPointsAddSubtract } from "$lib/server/points";
+import { createTransaction, getUserPoints } from "$lib/server/points";
 import { computeFileHash } from "$lib/hashMedia";
 import { MEDIA_LOCATON } from "$env/static/private";
 import fs from "fs/promises";
@@ -32,7 +32,7 @@ async function getSubmittedBounties(userId: string) {
             table.bountySubmission,
             and(
                 eq(table.bounty.id, table.bountySubmission.bountyId),
-                eq(table.bountySubmission.submitter, userId)
+                eq(table.bountySubmission.submitterId, userId)
             )
         )
         .where(isNotNull(table.bountySubmission.hash)))
@@ -49,26 +49,33 @@ export async function createBounty(creatorId: string, title: string, completionC
         throw Error("User does not exist")
     }
 
-    if (user.points < reward) {
+    const userPoints = await getUserPoints(user.id);
+
+    if (userPoints < reward) {
         throw Error("User does not have enough points to create a bounty")
     }
 
-    await userPointsAddSubtract(creatorId, -reward)
+    return await db.transaction(async (tx) => {
+        const [bounty] = await tx.insert(table.bounty).values({
+            creatorId,
+            title,
+            completionCriteria,
+            reward,
+            deadline
+        }).returning()
 
-    const [bounty] = await db.insert(table.bounty).values({
-        creator: creatorId,
-        title,
-        completionCriteria,
-        reward,
-        deadline
-    }).returning()
+        await createTransaction(user.id, -reward, {
+            type: "bounty_escrow",
+            reference: bounty.id
+        }, tx)
 
-    return bounty
+        return bounty
+    })
 }
 
 const submissionMutex = new Mutex();
 
-export async function createBountySubmission(submitterId: string, bountyId: number, media: File): Promise<table.BountySubmission> {
+export async function createBountySubmission(submitterId: string, bountyId: string, media: File): Promise<table.BountySubmission> {
     const hash = await computeFileHash(media);
 
     let existingHash = await db.query.bountySubmission.findFirst({
@@ -111,7 +118,7 @@ export async function createBountySubmission(submitterId: string, bountyId: numb
 
                 const [newRecord] = await tx.insert(table.bountySubmission).values({
                     hash,
-                    submitter: submitterId,
+                    submitterId,
                     bountyId,
                     mediaLocation: finalPath
                 }).returning();

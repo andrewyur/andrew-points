@@ -6,17 +6,17 @@ mini economy for lodge
 
 - [x] discord oauth
 - [x] redeem page
-- [ ] transaction ledger
+- [x] transaction ledger
 - [x] bounty page
   - [x] create bounty interface
   - [x] list bounty page
   - [x] complete bounty interface
-- [ ] offers page
-  - [ ] create offer interface
-  - [ ] list offers page
-  - [ ] buy offer interface
-- [ ] trade page
-  - [ ] create trades
+- [ ] marketplace page
+  - [ ] create listing interface
+  - [ ] listings page
+  - [ ] buy listing interface
+- [ ] trade page (to be determined, could result in large coalescing of points)
+  - [ ] create trade page
 - [ ] earn page
   - [ ] create some menial task that ties points to physical work
 - [ ] statistics page

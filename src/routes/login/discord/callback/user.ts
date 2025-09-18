@@ -3,14 +3,10 @@ import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
 
 export async function createUser(discordId: string, username: string, avatarHash: string | null): Promise<table.User> {
-    // ID with 120 bits of entropy, or about the same as UUID v4.
-    const bytes = crypto.getRandomValues(new Uint8Array(15));
-    const id = encodeBase32LowerCase(bytes);
 
     const picture = avatarHash ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=128` : null
 
     const [user] = await db.insert(table.user).values({
-        id,
         discordId,
         username,
         picture

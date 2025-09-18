@@ -23,7 +23,7 @@
                 <td>{redeemable.description}</td>
                 <td
                     ><button
-                        disabled={redeemable.cost > data.user.points}
+                        disabled={redeemable.cost > data.userPoints}
                         onclick={() => {
                             activeRedeemable = redeemable;
                             confirmationDialog.showModal();
