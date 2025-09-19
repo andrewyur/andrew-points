@@ -6,13 +6,19 @@ import { MEDIA_LOCATON } from "$env/static/private";
 import fs from "fs/promises";
 import path from "path";
 import { proceessMedia } from "./fileProcessing";
-import { and, eq, isNotNull } from "drizzle-orm";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { Mutex } from 'async-mutex';
 
 export async function getBounties(userId: string) {
     const bounties = await db.query.bounty.findMany({
+        where: isNull(table.bounty.fulfilledBy),
         with: {
-            creator: true
+            creator: true,
+            submissions: {
+                with: {
+                    creator: true
+                }
+            }
         }
     });
 
@@ -114,13 +120,14 @@ export async function createBountySubmission(submitterId: string, bountyId: stri
     return await submissionMutex.runExclusive(async () => {
         try {
             return await db.transaction(async (tx) => {
-                await proceessMedia(media, tempFolder, tempfileName)
+                const metadata = await proceessMedia(media, tempFolder, tempfileName)
 
                 const [newRecord] = await tx.insert(table.bountySubmission).values({
                     hash,
                     submitterId,
                     bountyId,
-                    mediaLocation: finalPath
+                    mediaLocation: finalPath,
+                    ...metadata
                 }).returning();
 
                 await fs.rename(tempPath, finalPath)
@@ -134,3 +141,36 @@ export async function createBountySubmission(submitterId: string, bountyId: stri
     })
 }
 
+export async function deleteBountySubmission(deleterId: string, submissionId: string) {
+    const submission = await db.query.bountySubmission.findFirst({
+        where: eq(table.bountySubmission.id, submissionId),
+        with: {
+            bounty: true
+        }
+    })
+
+    if (!submission) {
+        throw Error("No bounty submission with that id")
+    }
+
+    if (deleterId !== submission.submitterId) {
+        throw Error("Submission does not belong to current user")
+    }
+
+    if (submission.bounty.fulfilledBy !== null) {
+        throw Error("Bounty has already been fulfilled")
+    }
+
+    if (submission.mediaLocation !== null) {
+        const resolvedMediaDir = path.resolve(MEDIA_LOCATON)
+        const resolvedSubmissionPath = path.resolve(submission.mediaLocation)
+
+        if (!resolvedSubmissionPath.startsWith(resolvedMediaDir)) {
+            return new Response("Media has a path that is not inside the media directory", { status: 400 })
+        }
+
+        await fs.unlink(resolvedSubmissionPath)
+    }
+
+    await db.delete(table.bountySubmission).where(eq(table.bountySubmission.id, submissionId))
+}

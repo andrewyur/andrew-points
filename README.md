@@ -37,6 +37,7 @@ mini economy for lodge
   - [ ] list active bounties
   - [ ] ban / timeout discord users
   - [ ] revert ledger actions
+  - [ ] transaction reversals
 - [ ] style pages
   - prioritizing mobile view
 - [ ] logger with file transport

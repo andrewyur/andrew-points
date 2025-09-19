@@ -2,9 +2,11 @@
     import { enhance } from '$app/forms';
     import { errorState } from '$lib/client/error';
     import { computeFileHash } from '$lib/hashMedia';
+    import type { ActionResult } from '@sveltejs/kit';
+    import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
 
-    let { data }: { data: PageServerData } = $props();
+    let { data }: { data: PageServerData & LayoutServerData } = $props();
 
     let createModal: HTMLDialogElement;
     let submitModal: HTMLDialogElement;
@@ -14,6 +16,11 @@
     const threeDaysLater = new Date();
     threeDaysLater.setDate(threeDaysLater.getDate() + 3);
     const threeDaysLaterValue = threeDaysLater.toISOString().split('T')[0];
+
+    function getMediaLink(id: string) {
+        const params = new URLSearchParams({ id });
+        return '/bounties/submissionMedia?' + params.toString();
+    }
 
     async function validateMedia(event: Event) {
         const target = event.target as HTMLInputElement;
@@ -83,6 +90,57 @@
                     >
                 </td>
             </tr>
+            <tr>
+                <td>
+                    {#each bounty.submissions as submission}
+                        {#if submission.mediaLocation !== null}
+                            <form
+                                use:enhance={() => {
+                                    return (response) => {
+                                        activeBounty = null;
+                                        if (
+                                            response.result.type === 'failure'
+                                        ) {
+                                            errorState.set(
+                                                String(response.result.data),
+                                            );
+                                        }
+                                        response.update({
+                                            reset: true,
+                                            invalidateAll: true,
+                                        });
+                                    };
+                                }}
+                                action="?/deleteSubmission"
+                                method="POST"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="id"
+                                    value={submission.id}
+                                />
+                                <button type="submit">remove submission</button>
+                            </form>
+                            {#if submission.type === 'video'}
+                                <!-- svelte-ignore a11y_media_has_caption -->
+                                <video
+                                    src={getMediaLink(submission.id)}
+                                    width={submission.width}
+                                    height={submission.height}
+                                    controls
+                                ></video>
+                            {:else}
+                                <img
+                                    src={getMediaLink(submission.id)}
+                                    width={submission.width}
+                                    height={submission.height}
+                                    alt={'image submission'}
+                                />
+                            {/if}
+                        {/if}
+                    {/each}
+                </td>
+            </tr>
         {/each}
     </tbody>
 </table>
@@ -97,7 +155,18 @@
         rejected by an admin, based on your completion criteria.
     </p>
     <form
-        use:enhance
+        use:enhance={() => {
+            return (response) => {
+                activeBounty = null;
+                if (response.result.type === 'failure') {
+                    errorState.set(String(response.result.data));
+                }
+                response.update({
+                    reset: true,
+                    invalidateAll: true,
+                });
+            };
+        }}
         onsubmit={() => createModal.close()}
         method="POST"
         action="?/create"
@@ -146,10 +215,7 @@
             return (response) => {
                 activeBounty = null;
                 if (response.result.type === 'failure') {
-                    errorState.set(
-                        'Error returned from server when submitting bounty: ' +
-                            response.result.data,
-                    );
+                    errorState.set(String(response.result.data));
                 }
                 response.update({
                     reset: true,

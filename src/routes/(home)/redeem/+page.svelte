@@ -1,9 +1,10 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
+    import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
     import type { Redeemable } from './+page.server';
 
-    let { data }: { data: PageServerData } = $props();
+    let { data }: { data: PageServerData & LayoutServerData } = $props();
     const { redeemableItems } = data;
 
     let activeRedeemable: Redeemable | undefined = $state();

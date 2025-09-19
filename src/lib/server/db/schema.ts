@@ -1,6 +1,6 @@
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { relations } from 'drizzle-orm';
-import { sqliteTable, integer, text, } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, integer, text, type AnySQLiteColumn, } from 'drizzle-orm/sqlite-core';
 
 function createId(): string {
 	// ID with 120 bits of entropy, or about the same as UUID v4.
@@ -36,6 +36,7 @@ export const bounty = sqliteTable('bounty', {
 	createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(() => new Date()),
 	deadline: integer('deadline', { mode: 'timestamp_ms' }).notNull(),
 	reward: integer('reward').notNull(),
+	fulfilledBy: text('fulfilledBy').references((): AnySQLiteColumn => bountySubmission.id)
 })
 
 export const bountyRelations = relations(bounty, ({ one, many }) => ({
@@ -43,7 +44,7 @@ export const bountyRelations = relations(bounty, ({ one, many }) => ({
 		fields: [bounty.creatorId],
 		references: [user.id],
 	}),
-	submission: many(bountySubmission)
+	submissions: many(bountySubmission)
 }))
 
 export const bountySubmission = sqliteTable('bounty_submission', {
@@ -54,7 +55,10 @@ export const bountySubmission = sqliteTable('bounty_submission', {
 	submitterId: text('creator').notNull().references(() => user.id),
 	submittedAt: integer('submitted_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 	bountyId: text('bounty_id').notNull().references(() => bounty.id),
-	accepted: integer('accepted', { mode: "boolean" }).default(false)
+	rejected: integer('accepted', { mode: "boolean" }).notNull().default(false),
+	height: integer('height').notNull(),
+	width: integer('width').notNull(),
+	type: text('type').notNull()
 })
 
 export const bountySubmissionRelations = relations(bountySubmission, ({ one }) => ({

@@ -1,7 +1,6 @@
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { createBounty, createBountySubmission, getBounties } from "./bounties";
-import { getUserPoints } from "$lib/server/points";
+import { createBountySubmission, getBounties, createBounty, deleteBountySubmission } from "./bounties";
 
 export const load: PageServerLoad = async (event) => {
     if (!event.locals.user) {
@@ -10,8 +9,6 @@ export const load: PageServerLoad = async (event) => {
 
     return {
         bounties: await getBounties(event.locals.user.id),
-        user: event.locals.user,
-        userPoints: await getUserPoints(event.locals.user.id)
     }
 }
 
@@ -35,7 +32,7 @@ export const actions: Actions = {
         try {
             await createBounty(locals.user.id, title as string, completionCriteria as string, new Date(deadline as string), Number(reward))
         } catch (e) {
-            return fail(500, (e as Error).message)
+            return fail(400, `Error creating bounty: ${(e as Error).message ?? "unknown reason"}`)
         }
     },
     submit: async ({ locals, request }) => {
@@ -71,7 +68,28 @@ export const actions: Actions = {
             await createBountySubmission(locals.user.id, bountyId, file)
         } catch (e) {
             console.log("form submission failed with error:", e)
-            return fail(400, (e as Error).message ?? "Creating submission failed for unknown reason")
+            return fail(400, `Creating submission failed: ${(e as Error).message ?? "unknown reason"}`)
+        }
+    },
+    deleteSubmission: async ({ locals, request }) => {
+        if (!locals.user) {
+            redirect(302, '/login')
+        }
+
+        const formData = await request.formData()
+
+        const formId = formData.get("id")
+
+        if (formId === null) {
+            return fail(400, "an input was missing from form")
+        }
+
+        const id = formId as string
+
+        try {
+            await deleteBountySubmission(locals.user.id, id)
+        } catch (e) {
+            return fail(400, `error deleting submission: ${(e as Error).message ?? "unknown reason"}`)
         }
     }
 }

@@ -43,12 +43,8 @@ const redeemableItems: Redeemable[] = [
     }
 ]
 
-export const load: PageServerLoad = async (event) => {
-    if (!event.locals.user) {
-        return redirect(302, "/login");
-    }
-
-    return { redeemableItems, user: event.locals.user, userPoints: await getUserPoints(event.locals.user.id) }
+export const load: PageServerLoad = () => {
+    return { redeemableItems }
 }
 
 export const actions: Actions = {
