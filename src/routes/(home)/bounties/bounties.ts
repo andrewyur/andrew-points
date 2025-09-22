@@ -6,18 +6,18 @@ import { MEDIA_LOCATON } from "$env/static/private";
 import fs from "fs/promises";
 import path from "path";
 import { proceessMedia } from "./fileProcessing";
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, eq, isNotNull, not } from "drizzle-orm";
 import { Mutex } from 'async-mutex';
 
 export async function getBounties(userId: string) {
     const bounties = await db.query.bounty.findMany({
-        where: isNull(table.bounty.fulfilledBy),
+        where: not(table.bounty.completed),
         with: {
             creator: true,
             submissions: {
                 with: {
                     creator: true
-                }
+                },
             }
         }
     });
@@ -28,6 +28,24 @@ export async function getBounties(userId: string) {
         ...b,
         submitted: submittedIds.has(b.id)
     }));
+}
+
+export async function getBountyById(bountyId: string) {
+    return await db.query.bounty.findFirst({
+        where: eq(table.bounty.id, bountyId)
+    })
+}
+
+export async function getBountySubmissions(bountyId: string) {
+    return await db.query.bountySubmission.findMany({
+        where: eq(table.bountySubmission.bountyId, bountyId)
+    })
+}
+
+export async function getSubmissionById(submissionId: string) {
+    return await db.query.bountySubmission.findFirst({
+        where: eq(table.bountySubmission.id, submissionId)
+    })
 }
 
 async function getSubmittedBounties(userId: string) {
@@ -45,32 +63,17 @@ async function getSubmittedBounties(userId: string) {
         .map((o) => o.id)
 }
 
-export async function createBounty(creatorId: string, title: string, completionCriteria: string, deadline: Date, reward: number): Promise<table.Bounty> {
-
-    const user = await db.query.user.findFirst({
-        where: (u, { eq }) => eq(u.id, creatorId)
-    });
-
-    if (!user) {
-        throw Error("User does not exist")
-    }
-
-    const userPoints = await getUserPoints(user.id);
-
-    if (userPoints < reward) {
-        throw Error("User does not have enough points to create a bounty")
-    }
-
+export async function createBounty(creatorId: string, title: string, fulfillmentCriteria: string, deadline: Date, reward: number): Promise<table.Bounty> {
     return await db.transaction(async (tx) => {
         const [bounty] = await tx.insert(table.bounty).values({
             creatorId,
             title,
-            completionCriteria,
+            fulfillmentCriteria,
             reward,
             deadline
         }).returning()
 
-        await createTransaction(user.id, -reward, {
+        await createTransaction(creatorId, -reward, {
             type: "bounty_escrow",
             reference: bounty.id
         }, tx)
@@ -141,33 +144,14 @@ export async function createBountySubmission(submitterId: string, bountyId: stri
     })
 }
 
-export async function deleteBountySubmission(deleterId: string, submissionId: string) {
-    const submission = await db.query.bountySubmission.findFirst({
-        where: eq(table.bountySubmission.id, submissionId),
-        with: {
-            bounty: true
-        }
-    })
-
-    if (!submission) {
-        throw Error("No bounty submission with that id")
-    }
-
-    if (deleterId !== submission.submitterId) {
-        throw Error("Submission does not belong to current user")
-    }
-
-    if (submission.bounty.fulfilledBy !== null) {
-        throw Error("Bounty has already been fulfilled")
-    }
+export async function deleteBountySubmission(submissionId: string) {
+    const submission = (await getSubmissionById(submissionId))!;
 
     if (submission.mediaLocation !== null) {
         const resolvedMediaDir = path.resolve(MEDIA_LOCATON)
         const resolvedSubmissionPath = path.resolve(submission.mediaLocation)
 
-        if (!resolvedSubmissionPath.startsWith(resolvedMediaDir)) {
-            return new Response("Media has a path that is not inside the media directory", { status: 400 })
-        }
+        if (!resolvedSubmissionPath.startsWith(resolvedMediaDir)) throw Error("Media has a path that is not inside the media directory");
 
         await fs.unlink(resolvedSubmissionPath)
     }

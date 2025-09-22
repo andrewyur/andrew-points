@@ -32,10 +32,11 @@ export const bounty = sqliteTable('bounty', {
 	id: text('id').primaryKey().$defaultFn(createId),
 	creatorId: text('creator').notNull().references(() => user.id),
 	title: text('title').notNull(),
-	completionCriteria: text('completion_criteria').notNull(),
+	fulfillmentCriteria: text('fulfillment_criteria').notNull(),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(() => new Date()),
 	deadline: integer('deadline', { mode: 'timestamp_ms' }).notNull(),
 	reward: integer('reward').notNull(),
+	completed: integer('completed', { mode: "boolean" }).notNull().default(false),
 	fulfilledBy: text('fulfilledBy').references((): AnySQLiteColumn => bountySubmission.id)
 })
 
@@ -55,7 +56,7 @@ export const bountySubmission = sqliteTable('bounty_submission', {
 	submitterId: text('creator').notNull().references(() => user.id),
 	submittedAt: integer('submitted_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 	bountyId: text('bounty_id').notNull().references(() => bounty.id),
-	rejected: integer('accepted', { mode: "boolean" }).notNull().default(false),
+	rejected: integer('rejected', { mode: "boolean" }).notNull().default(false),
 	height: integer('height').notNull(),
 	width: integer('width').notNull(),
 	type: text('type').notNull()
@@ -89,6 +90,29 @@ export const ledgerEntryRelations = relations(ledgerEntry, ({ one }) => ({
 	})
 }))
 
+export const offer = sqliteTable('offer', {
+	id: text('id').primaryKey().$defaultFn(createId),
+	posterId: text('poster_id').notNull().references(() => user.id),
+	cost: integer('cost').notNull(),
+	title: text('title').notNull(),
+	description: text('description').notNull(),
+	buyerId: text('buyer_id').references(() => user.id),
+	purchasedAt: integer('purchased_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+	state: text('state').notNull().default("active"), // "active" | "pending" | "disputed" | "completed"
+	visibleTo: text('visibleTo').references(() => user.id)
+})
+
+export const offerRelations = relations(offer, ({ one }) => ({
+	poster: one(user, {
+		fields: [offer.posterId],
+		references: [user.id]
+	}),
+	buyer: one(user, {
+		fields: [offer.buyerId],
+		references: [user.id]
+	}),
+}))
+
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;
@@ -98,3 +122,5 @@ export type Bounty = typeof bounty.$inferSelect;
 export type BountySubmission = typeof bountySubmission.$inferSelect;
 
 export type LedgerEntry = typeof ledgerEntry.$inferSelect;
+
+export type Offer = typeof offer.$inferSelect;

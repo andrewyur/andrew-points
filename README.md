@@ -11,6 +11,8 @@ mini economy for lodge
   - [x] create bounty interface
   - [x] list bounty page
   - [x] complete bounty interface
+- [x] cron jobs to check for expiration of objects
+  - need to set up docker compose, image with multiple entrypoints, and db in volume
 - [ ] marketplace page
   - [ ] create listing interface
   - [ ] listings page
