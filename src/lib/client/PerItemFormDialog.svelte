@@ -15,6 +15,7 @@
     } & HTMLFormAttributes = $props();
 
     let modal: HTMLDialogElement;
+    let form: ErrorHandlingForm;
 
     $effect(() => {
         if (activeElement !== null) {
@@ -26,10 +27,17 @@
     });
 
     const close = () => (activeElement = null);
+
+    export const submit = () => form.submit();
 </script>
 
 <dialog bind:this={modal} onclose={close}>
     <button onclick={close}>Close</button>
     {@render header?.()}
-    <ErrorHandlingForm {...rest} {children} postSubmit={close} />
+    <ErrorHandlingForm
+        bind:this={form}
+        {...rest}
+        {children}
+        postSubmit={close}
+    />
 </dialog>

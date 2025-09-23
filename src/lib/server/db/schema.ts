@@ -97,7 +97,7 @@ export const offer = sqliteTable('offer', {
 	title: text('title').notNull(),
 	description: text('description').notNull(),
 	buyerId: text('buyer_id').references(() => user.id),
-	purchasedAt: integer('purchased_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+	purchasedAt: integer('purchased_at', { mode: "timestamp_ms" }),
 	state: text('state').notNull().default("active"), // "active" | "pending" | "disputed" | "completed"
 	visibleTo: text('visibleTo').references(() => user.id)
 })

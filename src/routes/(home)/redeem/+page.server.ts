@@ -40,6 +40,12 @@ const redeemableItems: Redeemable[] = [
         description: "Have a best friend themed photoshoot with andrew, and get a post announcing you are andrew's new best friend on instagram",
         redeemMessage: "Andrew will be reaching out to you shortly. Think of some ideas for pictures",
         cost: 500
+    },
+    {
+        name: "Full Body Oil Massage with Miles",
+        description: "Miles will oil you down, and perform a full body deep tissue massage on you",
+        redeemMessage: "Miles will be reaching out to you shortly",
+        cost: 500
     }
 ]
 

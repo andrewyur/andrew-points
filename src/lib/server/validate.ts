@@ -31,3 +31,11 @@ export function validateFile(value: FormDataEntryValue | null): File {
 
     return value as File
 }
+
+export function validateNullableString(value: FormDataEntryValue | null) {
+    if (value === null || (value as string).length === 0) {
+        return null
+    } else {
+        return value as string
+    }
+}

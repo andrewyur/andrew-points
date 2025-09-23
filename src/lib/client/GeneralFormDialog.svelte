@@ -13,14 +13,20 @@
     } & Partial<HTMLFormAttributes> = $props();
 
     let modal: HTMLDialogElement | null = $state(null);
+    let form: ErrorHandlingForm;
 
     export const show = () => modal?.showModal();
-
+    export const submit = () => form.submit();
     export const close = () => modal?.close();
 </script>
 
 <dialog bind:this={modal}>
     <button onclick={close}>Close</button>
     {@render header?.()}
-    <ErrorHandlingForm {...rest} {children} onsubmit={() => modal?.close()} />
+    <ErrorHandlingForm
+        bind:this={form}
+        {...rest}
+        {children}
+        onsubmit={() => modal?.close()}
+    />
 </dialog>

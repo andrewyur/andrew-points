@@ -1,5 +1,5 @@
 import { discord } from "$lib/server/oauth";
-import { createUser, getUserFromDiscordId, updateUserAvatar } from "./user";
+import { createUser, getUserFromDiscordId, updateUserAvatar } from "$lib/server/user";
 import type { RequestEvent } from "@sveltejs/kit";
 import type { OAuth2Tokens } from "arctic";
 import * as auth from "$lib/server/auth"

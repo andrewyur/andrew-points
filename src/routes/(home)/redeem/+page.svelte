@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
+    import ConfirmationForm from '$lib/client/ConfirmationForm.svelte';
     import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
     import type { Redeemable } from './+page.server';
@@ -7,9 +7,8 @@
     let { data }: { data: PageServerData & LayoutServerData } = $props();
     const { redeemableItems } = data;
 
-    let activeRedeemable: Redeemable | undefined = $state();
+    let activeRedeemable: Redeemable | null = $state(null);
 
-    let confirmationDialog: HTMLDialogElement;
     let redeemedDialog: HTMLDialogElement;
 </script>
 
@@ -25,10 +24,7 @@
                 <td
                     ><button
                         disabled={redeemable.cost > data.userPoints}
-                        onclick={() => {
-                            activeRedeemable = redeemable;
-                            confirmationDialog.showModal();
-                        }}
+                        onclick={() => (activeRedeemable = redeemable)}
                         aria-label="redeem">Buy</button
                     ></td
                 >
@@ -37,41 +33,23 @@
     </tbody>
 </table>
 
-<dialog bind:this={confirmationDialog}>
-    <h1>Are you sure?</h1>
-    <p>You are about to spend {activeRedeemable?.cost} points</p>
-    <button
-        onclick={() => {
-            activeRedeemable = undefined;
-            confirmationDialog.close();
-        }}
-        aria-label="cancel">Cancel</button
-    >
-    <form use:enhance method="POST">
+<ConfirmationForm bind:activator={activeRedeemable}>
+    {#snippet formContents()}
         <input
             type="hidden"
             name="redeemable_name"
             value={activeRedeemable?.name}
         />
-        <button
-            type="submit"
-            onclick={() => {
-                confirmationDialog.close();
-                redeemedDialog.showModal();
-            }}>Redeem</button
-        >
-    </form>
-</dialog>
+    {/snippet}
+    <h1>Are you sure?</h1>
+    <p>You are about to spend {activeRedeemable?.cost} points.</p>
+    <p>This is an irreversible action.</p>
+</ConfirmationForm>
 
 <dialog bind:this={redeemedDialog}>
     <h1>Congratulations!</h1>
     <p>{activeRedeemable?.redeemMessage}</p>
-    <button
-        onclick={() => {
-            activeRedeemable = undefined;
-            redeemedDialog.close();
-        }}>Close</button
-    >
+    <button onclick={() => redeemedDialog.close()}>Close</button>
 </dialog>
 
 <style>

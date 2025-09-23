@@ -6,6 +6,10 @@
 
     let submitting = $state(false);
 
+    let form: HTMLFormElement | null = $state(null);
+
+    export const submit = () => form?.requestSubmit();
+
     const {
         children,
         postSubmit,
@@ -20,6 +24,7 @@
     <p>Submitting form...</p>
 {:else}
     <form
+        bind:this={form}
         use:enhance={() => {
             submitting = true;
             return (response) => {

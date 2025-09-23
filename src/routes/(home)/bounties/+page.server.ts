@@ -2,7 +2,7 @@ import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { createBountySubmission, getBounties, createBounty, deleteBountySubmission, getBountyById, getBountySubmissions, getSubmissionById } from "./bounties";
 import { validateDate, validateFile, validatePoints, validateString } from "$lib/server/validate";
-import { getUserById } from "$lib/server/user";
+import { getUserFromId } from "$lib/server/user";
 import { getUserPoints } from "$lib/server/points";
 
 export const load: PageServerLoad = async (event) => {
@@ -29,7 +29,7 @@ export const actions: Actions = {
             const reward = validatePoints(formData.get("reward"))
             const deadline = validateDate(formData.get("deadline"))
 
-            const user = await getUserById(locals.user.id)
+            const user = await getUserFromId(locals.user.id)
 
             if (!user) throw Error("User does not exist");
 
@@ -46,8 +46,6 @@ export const actions: Actions = {
         if (!locals.user) {
             redirect(302, '/login')
         }
-
-        locals.user
 
         const formData = await request.formData()
 

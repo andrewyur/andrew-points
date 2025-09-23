@@ -19,6 +19,7 @@
     <a href="/">Lodge Points</a>
     <a href="/redeem">Redeem</a>
     <a href="/bounties">Bounties</a>
+    <a href="/marketplace">Marketplace</a>
     <form method="post" action="/logout" use:enhance>
         <button>Sign out</button>
     </form>

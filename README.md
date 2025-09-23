@@ -13,10 +13,10 @@ mini economy for lodge
   - [x] complete bounty interface
 - [x] cron jobs to check for expiration of objects
   - need to set up docker compose, image with multiple entrypoints, and db in volume
-- [ ] marketplace page
-  - [ ] create listing interface
-  - [ ] listings page
-  - [ ] buy listing interface
+- [x] marketplace page
+  - [x] create listing interface
+  - [x] listings page
+  - [x] buy listing interface
 - [ ] trade page (to be determined, could result in large coalescing of points)
   - [ ] create trade page
 - [ ] earn page
@@ -42,4 +42,5 @@ mini economy for lodge
   - [ ] transaction reversals
 - [ ] style pages
   - prioritizing mobile view
+  - daisyui.com
 - [ ] logger with file transport
