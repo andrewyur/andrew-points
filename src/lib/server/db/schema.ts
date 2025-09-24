@@ -113,6 +113,19 @@ export const offerRelations = relations(offer, ({ one }) => ({
 	}),
 }))
 
+export const earnSession = sqliteTable('earn_session', {
+	id: text('id').primaryKey().$defaultFn(createId),
+	userId: text('user_id').notNull().references(() => user.id).unique(),
+	remaining: integer('remaining').notNull().default(10),
+	payout: integer('payout').notNull(),
+	type: text('type').notNull(),
+	expiresAt: integer('expires_at', { mode: "timestamp_ms" }).$defaultFn(() => {
+		const now = new Date();
+		now.setHours(now.getHours() + 3)
+		return now
+	})
+})
+
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;

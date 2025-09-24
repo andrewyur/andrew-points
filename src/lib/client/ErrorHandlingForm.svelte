@@ -2,7 +2,7 @@
     import { enhance } from '$app/forms';
     import type { Snippet } from 'svelte';
     import type { HTMLFormAttributes } from 'svelte/elements';
-    import { errorState } from './error';
+    import { errorState } from './status';
 
     let submitting = $state(false);
 

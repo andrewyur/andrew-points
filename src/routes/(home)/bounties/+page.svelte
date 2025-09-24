@@ -5,14 +5,13 @@
     import { computeFileHash } from '$lib/hashMedia';
     import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
+    import { fileHashExists } from './bounties.remote';
 
     let { data }: { data: PageServerData & LayoutServerData } = $props();
 
     let createModal: GeneralFormDialog;
 
     let activeBounty = $state<string | null>(null);
-
-    // $inspect(activeBounty);
 
     const threeDaysLater = new Date();
     threeDaysLater.setDate(threeDaysLater.getDate() + 3);
@@ -23,33 +22,21 @@
         return '/bounties/submissionMedia?' + params.toString();
     }
 
-    async function validateMedia(event: Event) {
-        const target = event.target as HTMLInputElement;
-        const file = target.files?.[0];
+    let fileInput: HTMLInputElement;
 
-        if (file) {
-            target.setCustomValidity('Validating media...');
+    async function validateMedia() {
+        const file = fileInput.files?.[0];
 
-            const hash = await computeFileHash(file);
-            const params = new URLSearchParams({ hash });
-            const url = '/bounties/validateFile?' + params.toString();
+        if (file === undefined) return;
 
-            let response;
-            try {
-                response = await fetch(url);
-            } catch {
-                target.setCustomValidity('Validation endpoint failed');
-                return;
-            }
+        const hash = await computeFileHash(file);
 
-            if (!response.ok) {
-                const reason = await response.text();
-                target.setCustomValidity(
-                    reason || 'File validation failed for unknown reason',
-                );
-            } else {
-                target.setCustomValidity('');
-            }
+        if (await fileHashExists(hash)) {
+            fileInput.setCustomValidity(
+                'Submission with that media already exists!',
+            );
+        } else {
+            fileInput.setCustomValidity('');
         }
     }
 </script>
@@ -188,7 +175,8 @@
             accept="image/*, video/*"
             required
             name="media"
-            onchange={(e) => validateMedia(e)}
+            onchange={validateMedia}
+            bind:this={fileInput}
         />
     </label>
     <button type="submit">Submit</button>

@@ -6,10 +6,10 @@ export type Context = {
     type: "admin_created" | "admin_removed"
     note?: string
 } | {
-    type: "bounty_escrow" | "bounty_reward"
+    type: "bounty_escrow" | "bounty_reward" | "bounty_refund"
     reference: string
 } | {
-    type: "redeemed_reward"
+    type: "redeemed_reward" | "earn_payout"
     note: string
 } | {
     type: "offer_escrow" | "offer_payout"

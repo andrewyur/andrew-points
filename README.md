@@ -19,8 +19,17 @@ mini economy for lodge
   - [x] buy listing interface
 - [ ] trade page (to be determined, could result in large coalescing of points)
   - [ ] create trade page
-- [ ] earn page
-  - [ ] create some menial task that ties points to physical work
+- [x] earn page
+  - [x] create some menial task that ties points to physical work
+    - free tier hCaptcha
+    - earn session creation and timed expiry
+    - randomized puzzle timing
+  - [ ] potential improvements
+    - [ ] send a video of you doing a pushup/jumping jack
+    - [ ] do one random task of my choosing
+    - [ ] Quicktime events
+    - [ ] talk to me for 5 minutes straight, uninterrupted
+    - [ ] tell me a joke, get points if its good, lose points if its bad
 - [ ] statistics page
   - [ ] recent activity
   - [ ] total points in circulation

@@ -1,14 +1,22 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
-    import { errorState } from '$lib/client/error';
+    import { errorState, infoState } from '$lib/client/status';
 
     let errorDialog: HTMLDialogElement;
+    let infoDialog: HTMLDialogElement;
 
     $effect(() => {
         if ($errorState !== null) {
             errorDialog.showModal();
         } else {
             errorDialog.close();
+        }
+    });
+    $effect(() => {
+        if ($infoState !== null) {
+            infoDialog.showModal();
+        } else {
+            infoDialog.close();
         }
     });
 
@@ -20,6 +28,7 @@
     <a href="/redeem">Redeem</a>
     <a href="/bounties">Bounties</a>
     <a href="/marketplace">Marketplace</a>
+    <a href="/earn">Earn</a>
     <form method="post" action="/logout" use:enhance>
         <button>Sign out</button>
     </form>
@@ -30,6 +39,11 @@
 <dialog bind:this={errorDialog}>
     <p>{$errorState}</p>
     <button onclick={() => errorState.set(null)}>Close</button>
+</dialog>
+
+<dialog bind:this={infoDialog}>
+    <p>{$infoState}</p>
+    <button onclick={() => infoState.set(null)}>Ok</button>
 </dialog>
 
 <style>
