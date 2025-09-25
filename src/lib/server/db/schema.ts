@@ -1,6 +1,7 @@
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { relations } from 'drizzle-orm';
 import { sqliteTable, integer, text, type AnySQLiteColumn, } from 'drizzle-orm/sqlite-core';
+import { M } from 'vite-node/dist/index.d-DGmxD2U7.js';
 
 function createId(): string {
 	// ID with 120 bits of entropy, or about the same as UUID v4.
@@ -77,9 +78,9 @@ export const ledgerEntry = sqliteTable('ledger_entry', {
 	id: text('id').primaryKey().$defaultFn(createId),
 	userId: text('user').notNull().references(() => user.id),
 	amount: integer('amount').notNull(),
+	bountyId: text('bounty_id').references(() => bounty.id),
+	offerId: text('offer_id').references(() => offer.id),
 	type: text('type').notNull(),
-	reference: text('reference'),
-	note: text('note'),
 	createdAt: integer('submitted_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 })
 
@@ -87,6 +88,14 @@ export const ledgerEntryRelations = relations(ledgerEntry, ({ one }) => ({
 	user: one(user, {
 		fields: [ledgerEntry.userId],
 		references: [user.id]
+	}),
+	bounty: one(bounty, {
+		fields: [ledgerEntry.bountyId],
+		references: [bounty.id]
+	}),
+	offer: one(offer, {
+		fields: [ledgerEntry.offerId],
+		references: [offer.id]
 	})
 }))
 

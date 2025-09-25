@@ -10,7 +10,7 @@ async function checkBountyExpirations() {
         }).where(gt(table.bounty.deadline, new Date())).returning()
 
         for (const bounty of bounties) {
-            await createTransaction(bounty.creatorId, bounty.reward, { type: "bounty_refund", reference: bounty.id })
+            await createTransaction(bounty.creatorId, bounty.reward, { type: "bounty_refund", bountyId: bounty.id })
         }
     })
 

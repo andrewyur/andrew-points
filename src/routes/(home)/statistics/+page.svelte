@@ -49,8 +49,6 @@
             <p>poster: {activity.offer.poster.username}</p>
             <p>buyer: {activity.offer.buyer?.username ?? 'Not Bought'}</p>
             <p>cost: {activity.offer.cost}</p>
-        {:else}
-            <p>note: {activity.note}</p>
         {/if}
     </div>
 {/each}

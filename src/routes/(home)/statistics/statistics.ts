@@ -1,6 +1,6 @@
 import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
-import { eq, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export async function getAllUserPoints() {
     return await db.select({
@@ -13,42 +13,22 @@ export async function getAllUserPoints() {
 }
 
 export async function getRecentActivity() {
-    const ledgerEntries = await db.query.ledgerEntry.findMany({
+    return await db.query.ledgerEntry.findMany({
         limit: 10,
         orderBy: table.ledgerEntry.createdAt,
         with: {
-            user: true
+            user: true,
+            bounty: {
+                with: {
+                    creator: true
+                }
+            },
+            offer: {
+                with: {
+                    buyer: true,
+                    poster: true
+                }
+            }
         }
     })
-
-    return await Promise.all(ledgerEntries.map(async (e) => {
-        switch (e.type) {
-            case "bounty_escrow":
-            case "bounty_reward":
-            case "bounty_refund":
-                return {
-                    ...e,
-                    bounty: await db.query.bounty.findFirst({
-                        where: eq(table.bounty.id, e.reference!),
-                        with: {
-                            creator: true
-                        }
-                    })
-                }
-            case "offer_escrow":
-            case "offer_payout":
-                return {
-                    ...e,
-                    offer: await db.query.offer.findFirst({
-                        where: eq(table.offer.id, e.reference!),
-                        with: {
-                            buyer: true,
-                            poster: true
-                        }
-                    })
-                }
-            default:
-                return e
-        }
-    }))
 }

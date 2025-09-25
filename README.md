@@ -8,15 +8,15 @@ mini economy for lodge
 - [x] redeem page
 - [x] transaction ledger
 - [x] bounty page
-  - [x] create bounty interface
-  - [x] list bounty page
-  - [x] complete bounty interface
+  - create bounty interface
+  - list bounty page
+  - complete bounty interface
 - [x] cron jobs to check for expiration of objects
   - need to set up docker compose, image with multiple entrypoints, and db in volume
 - [x] marketplace page
-  - [x] create listing interface
-  - [x] listings page
-  - [x] buy listing interface
+  - create listing interface
+  - listings page
+  - buy listing interface
 - [ ] trade page (to be determined, could result in large coalescing of points)
   - [ ] create trade page
 - [x] earn page
@@ -31,27 +31,33 @@ mini economy for lodge
     - [ ] talk to me for 5 minutes straight, uninterrupted
     - [ ] tell me a joke, get points if its good, lose points if its bad
 - [x] statistics page
-  - [x] recent activity
+  - recent activity
+  - leaderboard
   - [ ] total points in circulation
-  - [x] leaderboard
+- [x] ledgerEntry reworks
+  - remove `type` column, integrate into `note` column
+  - add bountyId and offerId columns
+- [ ] user/home page & notifications
+  - display user's points
+  - display user's activity/ledger
+  - link home page to your user page
+    - display your tasks
+      - scan for offers in "pending" state with your userId as buyerId
+      - confirm/dispute offers for buyer
+    - admin options
+      - [ ] ban / timeout discord users
+      - create custom ledger entries
+      - admin tasks
+        - approve/deny bounty submissions
+          - scan for bounties with rejected: false
+        - examine offer disputes
+          - scan for offers in "disputed" state
 - [ ] discord bot
-  - [ ] notifications for every action
-- [ ] home page
-  - [ ] notifications
-  - [ ] your points
-  - [ ] your recent activity
-  - [ ] your notifications
-  - [ ] display user's ledger
-- [ ] user page
-  - [ ] display user's points
-  - [ ] display user's activity
-- [ ] admin accounts
-  - [ ] manipulate people's points
-    - [ ] send notification
-  - [ ] list active bounties
-  - [ ] ban / timeout discord users
-  - [ ] revert ledger actions
-  - [ ] transaction reversals
+  - hook into guild, get display names for lodge discord
+  - create function for creating notifications, notification types
+  - call in appropriate places (bounty created, offer bought, etc.)
+  - PM users for private notifications
+  - #points channel for announcements
 - [ ] style pages
   - prioritizing mobile view
   - daisyui.com

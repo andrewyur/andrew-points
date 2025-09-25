@@ -2,7 +2,7 @@
     import ConfirmationForm from '$lib/client/ConfirmationForm.svelte';
     import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
-    import type { Redeemable } from './+page.server';
+    import type { Redeemable } from './redeemables';
 
     let { data }: { data: PageServerData & LayoutServerData } = $props();
     const { redeemableItems } = data;

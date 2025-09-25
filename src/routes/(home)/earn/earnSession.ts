@@ -20,7 +20,7 @@ export async function getEarnSessionFromUser(userId: string) {
 export async function completeEarnSessionFromUser(userId: string) {
     return await db.transaction(async (tx) => {
         const [session] = await tx.delete(table.earnSession).where(eq(table.earnSession.userId, userId)).returning()
-        await createTransaction(userId, session.payout, { type: "earn_payout", note: session.type }, tx)
+        await createTransaction(userId, session.payout, { type: `earn_payout#${session.type}` }, tx)
         return session
     })
 }
