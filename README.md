@@ -30,10 +30,10 @@ mini economy for lodge
     - [ ] Quicktime events
     - [ ] talk to me for 5 minutes straight, uninterrupted
     - [ ] tell me a joke, get points if its good, lose points if its bad
-- [ ] statistics page
-  - [ ] recent activity
+- [x] statistics page
+  - [x] recent activity
   - [ ] total points in circulation
-  - [ ] leaderboard
+  - [x] leaderboard
 - [ ] discord bot
   - [ ] notifications for every action
 - [ ] home page
@@ -42,6 +42,9 @@ mini economy for lodge
   - [ ] your recent activity
   - [ ] your notifications
   - [ ] display user's ledger
+- [ ] user page
+  - [ ] display user's points
+  - [ ] display user's activity
 - [ ] admin accounts
   - [ ] manipulate people's points
     - [ ] send notification

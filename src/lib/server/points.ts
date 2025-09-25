@@ -6,14 +6,11 @@ export type Context = {
     type: "admin_created" | "admin_removed"
     note?: string
 } | {
-    type: "bounty_escrow" | "bounty_reward" | "bounty_refund"
+    type: "bounty_escrow" | "bounty_reward" | "bounty_refund" | "offer_escrow" | "offer_payout"
     reference: string
 } | {
     type: "redeemed_reward" | "earn_payout"
     note: string
-} | {
-    type: "offer_escrow" | "offer_payout"
-    reference: string
 }
 
 export async function createTransaction(userId: string, amount: number, context: Context, client?: Parameters<Parameters<typeof db.transaction>[0]>[0]): Promise<void> {

@@ -29,6 +29,7 @@
     <a href="/bounties">Bounties</a>
     <a href="/marketplace">Marketplace</a>
     <a href="/earn">Earn</a>
+    <a href="/statistics">Statistics</a>
     <form method="post" action="/logout" use:enhance>
         <button>Sign out</button>
     </form>
