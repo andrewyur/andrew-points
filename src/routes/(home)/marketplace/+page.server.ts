@@ -74,8 +74,6 @@ export const actions: Actions = {
 
             if (points < offer.cost) throw Error("User does not have enough points to buy the offer")
 
-            console.log(locals)
-
             await buyOffer(id, locals.user.id)
 
         } catch (e) {

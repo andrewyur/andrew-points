@@ -144,6 +144,7 @@
         Reward
         <input
             name="reward"
+            step="1"
             required
             type="number"
             min="0"

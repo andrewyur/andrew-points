@@ -1,7 +1,6 @@
 import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { relations } from 'drizzle-orm';
-import { sqliteTable, integer, text, type AnySQLiteColumn, } from 'drizzle-orm/sqlite-core';
-import { M } from 'vite-node/dist/index.d-DGmxD2U7.js';
+import { sqliteTable, integer, text, type AnySQLiteColumn } from 'drizzle-orm/sqlite-core';
 
 function createId(): string {
 	// ID with 120 bits of entropy, or about the same as UUID v4.
@@ -57,7 +56,7 @@ export const bountySubmission = sqliteTable('bounty_submission', {
 	submitterId: text('creator').notNull().references(() => user.id),
 	submittedAt: integer('submitted_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 	bountyId: text('bounty_id').notNull().references(() => bounty.id),
-	rejected: integer('rejected', { mode: "boolean" }).notNull().default(false),
+	state: text('state').notNull().default('pending'), // pending | rejected | accepted
 	height: integer('height').notNull(),
 	width: integer('width').notNull(),
 	type: text('type').notNull()
@@ -81,6 +80,7 @@ export const ledgerEntry = sqliteTable('ledger_entry', {
 	bountyId: text('bounty_id').references(() => bounty.id),
 	offerId: text('offer_id').references(() => offer.id),
 	type: text('type').notNull(),
+	message: text('message'),
 	createdAt: integer('submitted_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 })
 
@@ -107,6 +107,7 @@ export const offer = sqliteTable('offer', {
 	description: text('description').notNull(),
 	buyerId: text('buyer_id').references(() => user.id),
 	purchasedAt: integer('purchased_at', { mode: "timestamp_ms" }),
+	completeBy: integer('complete_by', { mode: "timestamp_ms" }),
 	state: text('state').notNull().default("active"), // "active" | "pending" | "disputed" | "completed"
 	visibleTo: text('visibleTo').references(() => user.id)
 })

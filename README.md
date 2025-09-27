@@ -37,7 +37,7 @@ mini economy for lodge
 - [x] ledgerEntry reworks
   - remove `type` column, integrate into `note` column
   - add bountyId and offerId columns
-- [ ] user/home page & notifications
+- [x] user/home page & notifications
   - display user's points
   - display user's activity/ledger
   - link home page to your user page

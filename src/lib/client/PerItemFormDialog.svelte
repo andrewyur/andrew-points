@@ -21,7 +21,6 @@
         if (activeElement !== null) {
             modal.showModal();
         } else {
-            console.log(modal);
             modal.close();
         }
     });

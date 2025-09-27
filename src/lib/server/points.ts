@@ -1,16 +1,19 @@
 import { db, type DatabaseTransactionClient } from "./db";
 import * as table from '$lib/server/db/schema';
-import { eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 
 
 export type Context = {
     type: "bounty_escrow" | "bounty_reward" | "bounty_refund",
     bountyId: string
 } | {
-    type: "offer_escrow" | "offer_payout"
+    type: "offer_escrow" | "offer_payout" | "offer_refund"
     offerId: string
 } | {
-    type: "admin" | `redeemed_reward#${string}` | `earn_payout#${string}`
+    type: | `redeemed_reward#${string}` | `earn_payout#${string}`
+} | {
+    type: "admin"
+    message?: string
 }
 
 // const transactionMessages = new Map<TransactionType, string>([
@@ -28,8 +31,9 @@ export type Context = {
 export async function createTransaction(userId: string, amount: number, context: Context, client?: DatabaseTransactionClient): Promise<void> {
     await (client ?? db).insert(table.ledgerEntry).values({
         userId,
-        amount,
+        amount: Math.round(amount),
         type: context.type,
+        message: "message" in context ? context.message : undefined,
         bountyId: "bountyId" in context ? context.bountyId : undefined,
         offerId: "offerId" in context ? context.offerId : undefined,
     })
@@ -44,4 +48,43 @@ export async function getUserPoints(userId: string): Promise<number> {
         .where(eq(table.ledgerEntry.userId, userId));
 
     return row?.balance ?? 0;
+}
+
+export type ExpandedLedgerEntry = Awaited<ReturnType<typeof db.query.ledgerEntry.findMany<{
+    with: {
+        user: true,
+        bounty: {
+            with: {
+                creator: true
+            }
+        },
+        offer: {
+            with: {
+                buyer: true,
+                poster: true
+            }
+        }
+    }
+}>>>[number]
+
+export async function getUserLedger(userId: string): Promise<ExpandedLedgerEntry[]> {
+    return await db.query.ledgerEntry.findMany({
+        limit: 10,
+        where: eq(table.ledgerEntry.userId, userId),
+        orderBy: desc(table.ledgerEntry.createdAt),
+        with: {
+            user: true,
+            bounty: {
+                with: {
+                    creator: true
+                }
+            },
+            offer: {
+                with: {
+                    buyer: true,
+                    poster: true
+                }
+            }
+        }
+    })
 }

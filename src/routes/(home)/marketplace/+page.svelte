@@ -60,7 +60,7 @@
     {/snippet}
     <label>
         cost
-        <input type="number" min="0" name="cost" required />
+        <input type="number" step="0" min="0" name="cost" required />
     </label>
     <label>
         title

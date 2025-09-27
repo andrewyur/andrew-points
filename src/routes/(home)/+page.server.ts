@@ -1,25 +1,31 @@
-import { redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
-import { createTransaction } from '$lib/server/points';
+import { fail, type Actions } from "@sveltejs/kit";
+import { getTasks } from "./userInfo";
+import { createTransaction, getUserLedger, getUserPoints } from "$lib/server/points";
+import * as v from "valibot";
 
+export async function load({ params, locals }) {
+	return {
+		activity: await getUserLedger(locals.user?.id!),
+		tasks: await getTasks(locals.user?.id!, locals.user?.admin!)
+	}
+}
+
+const adjustUserPoints = v.strictObject({
+	user: v.pipe(v.string(), v.nonEmpty()),
+	points: v.pipe(v.string(), v.nonEmpty(), v.transform(Number), v.integer()),
+	message: v.optional(v.string())
+});
 
 export const actions: Actions = {
-	increment: async ({ locals }) => {
-		if (!locals.user) {
-			return redirect(302, "/login");
-		}
+	default: async (event) => {
+		const formData = await event.request.formData();
+		const data = Object.fromEntries(formData.entries())
+		try {
+			const { user, points, message } = v.parse(adjustUserPoints, data);
 
-		await createTransaction(locals.user.id, 100, {
-			type: "admin_created"
-		})
-	},
-	decrement: async ({ locals }) => {
-		if (!locals.user) {
-			return redirect(302, "/login");
+			await createTransaction(user, points, { type: 'admin', message });
+		} catch (e) {
+			return fail(400, `Could not edit user points: ${(e as Error).message ?? "Unknown reason"}`)
 		}
-
-		await createTransaction(locals.user.id, -100, {
-			type: "admin_removed"
-		})
 	}
-};
+}

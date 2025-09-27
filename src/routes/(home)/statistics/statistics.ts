@@ -1,5 +1,6 @@
 import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
+import type { ExpandedLedgerEntry } from "$lib/server/points";
 import { sql } from "drizzle-orm";
 
 export async function getAllUserPoints() {
@@ -12,7 +13,7 @@ export async function getAllUserPoints() {
         .orderBy(sql`points DESC`)
 }
 
-export async function getRecentActivity() {
+export async function getRecentActivity(): Promise<ExpandedLedgerEntry[]> {
     return await db.query.ledgerEntry.findMany({
         limit: 10,
         orderBy: table.ledgerEntry.createdAt,

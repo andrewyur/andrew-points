@@ -1,4 +1,5 @@
 <script lang="ts">
+    import LedgerEntry from '$lib/client/LedgerEntry.svelte';
     import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
 
@@ -28,27 +29,6 @@
 
 <h2>Recent Activity</h2>
 
-{#each data.recentActivity as activity}
-    <div>
-        <h3>{activity.type}</h3>
-        <p>User: {activity.user.username}</p>
-        <p>amount: {activity.amount}</p>
-        <p>
-            at: {Intl.DateTimeFormat('en-us', {
-                dateStyle: 'short',
-                timeStyle: 'short',
-            }).format(activity.createdAt)}
-        </p>
-        {#if 'bounty' in activity && activity.bounty}
-            <p>bounty: {activity.bounty.title}</p>
-            <p>
-                fulfilled by: {activity.bounty.fulfilledBy ?? 'Not fulfilled'}
-            </p>
-        {:else if 'offer' in activity && activity.offer && activity.offer.visibleTo === null}
-            <p>offer: {activity.offer.title}</p>
-            <p>poster: {activity.offer.poster.username}</p>
-            <p>buyer: {activity.offer.buyer?.username ?? 'Not Bought'}</p>
-            <p>cost: {activity.offer.cost}</p>
-        {/if}
-    </div>
+{#each data.recentActivity as ledgerEntry}
+    <LedgerEntry {ledgerEntry} />
 {/each}

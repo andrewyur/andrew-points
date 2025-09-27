@@ -2,6 +2,7 @@ import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
 import { createTransaction } from "$lib/server/points";
 import { and, eq, isNull, not } from "drizzle-orm";
+import { Temporal } from "temporal-polyfill";
 
 // partitions public and private
 export async function getOffers(id: string) {
@@ -43,15 +44,19 @@ export async function deleteOffer(id: string) {
 }
 
 export async function buyOffer(userId: string, buyerId: string) {
+    const threeDays = Temporal.Now.zonedDateTimeISO('UTC').add({ days: 3 })
+
     await db.transaction(async (tx) => {
         const [offer] = await tx.update(table.offer).set({
             state: "pending",
-            buyerId
+            purchasedAt: new Date(),
+            completeBy: new Date(threeDays.epochMilliseconds),
+            buyerId,
         }).where(eq(table.offer.id, userId)).returning()
 
         await createTransaction(buyerId, -offer.cost, {
             type: "offer_escrow",
-            reference: offer.id
+            offerId: offer.id
         }, tx)
     })
 

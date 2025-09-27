@@ -16,11 +16,24 @@ async function checkBountyExpirations() {
 
 }
 
+async function checkOfferExpirations() {
+    db.transaction(async (tx) => {
+        const offers = await tx.update(table.offer).set({
+            state: "completed"
+        }).where(gt(table.offer.completeBy, new Date())).returning()
+
+        for (const offer of offers) {
+            await createTransaction(offer.posterId, offer.cost, { type: "offer_payout", offerId: offer.id }, tx)
+        }
+    })
+}
+
 async function checkEarnSessionExpirations() {
     db.delete(table.earnSession).where(gt(table.earnSession.expiresAt, new Date()))
 }
 
 export function checkExpirations() {
     checkBountyExpirations()
+    checkOfferExpirations()
     checkEarnSessionExpirations()
 }

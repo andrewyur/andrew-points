@@ -1,6 +1,6 @@
 import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
-import { createTransaction, getUserPoints } from "$lib/server/points";
+import { createTransaction } from "$lib/server/points";
 import { computeFileHash } from "$lib/hashMedia";
 import { MEDIA_LOCATON } from "$env/static/private";
 import fs from "fs/promises";
@@ -75,7 +75,7 @@ export async function createBounty(creatorId: string, title: string, fulfillment
 
         await createTransaction(creatorId, -reward, {
             type: "bounty_escrow",
-            reference: bounty.id
+            bountyId: bounty.id
         }, tx)
 
         return bounty

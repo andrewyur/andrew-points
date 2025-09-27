@@ -47,6 +47,7 @@
 		"hcaptcha": "^0.2.0",
 		"node-cron": "^4.2.1",
 		"sharp": "^0.34.3",
+		"temporal-polyfill": "^0.3.0",
 		"vite-node": "^3.2.4"
 	}
 }

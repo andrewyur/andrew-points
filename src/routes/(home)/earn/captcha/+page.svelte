@@ -19,7 +19,6 @@
             key: string;
         };
 
-        console.log(event.token);
         const response = await verifyCaptcha(event.token);
 
         if (!response.ok) {
