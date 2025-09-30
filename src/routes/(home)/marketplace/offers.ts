@@ -34,6 +34,7 @@ export async function getOfferById(id: string) {
 }
 
 export async function createOffer(posterId: string, cost: number, title: string, description: string, visibleTo: string | null) {
+    console.log(visibleTo, typeof visibleTo)
     await db.insert(table.offer).values({
         posterId, cost, title, description, visibleTo
     })

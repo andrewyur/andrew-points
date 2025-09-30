@@ -1,21 +1,29 @@
-<script lang="ts" generics="ElementType">
+<script
+    lang="ts"
+    generics="ElementType, RemoteFormType extends RemoteForm<any, undefined | { error: string }>"
+>
     import type { Snippet } from 'svelte';
     import type { HTMLFormAttributes } from 'svelte/elements';
     import ErrorHandlingForm from './ErrorHandlingForm.svelte';
+    import type { RemoteForm } from '@sveltejs/kit';
 
     let {
         activeElement = $bindable(),
         header,
         children,
+        remoteForm,
         ...rest
     }: {
         activeElement: ElementType | null;
         header?: Snippet;
         children: Snippet;
-    } & HTMLFormAttributes = $props();
+        remoteForm: RemoteFormType;
+    } & Partial<HTMLFormAttributes> = $props();
+
+    console.log(rest);
 
     let modal: HTMLDialogElement;
-    let form: ErrorHandlingForm;
+    let form: ErrorHandlingForm<RemoteFormType>;
 
     $effect(() => {
         if (activeElement !== null) {
@@ -35,6 +43,7 @@
     {@render header?.()}
     <ErrorHandlingForm
         bind:this={form}
+        {remoteForm}
         {...rest}
         {children}
         postSubmit={close}

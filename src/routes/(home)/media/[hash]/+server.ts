@@ -9,31 +9,25 @@ import { createReadStream } from "fs";
 import { Readable } from "stream";
 
 export async function GET(event: RequestEvent) {
-    const url = new URL(event.url);
-    const id = url.searchParams.get("id")
-    if (!id) {
-        return new Response("No id in query params", { status: 400 })
-    }
-
-    const submission = await db.query.bountySubmission.findFirst({
-        where: eq(table.bountySubmission.id, id)
+    const media = await db.query.media.findFirst({
+        where: eq(table.media.hash, event.params.hash)
     })
 
-    if (!submission || submission.mediaLocation === null) {
-        return new Response("Could not find any submission media for the provided id", { status: 404 })
+    if (!media) {
+        return new Response("Could not find any media for the hash", { status: 404 })
     }
 
     const resolvedMediaDir = path.resolve(MEDIA_LOCATON)
-    const resolvedSubmissionPath = path.resolve(submission.mediaLocation)
+    const resolvedMediaPath = path.resolve(media.path)
 
-    if (!resolvedSubmissionPath.startsWith(resolvedMediaDir)) {
-        return new Response("Media has a path that is not inside the media directory", { status: 400 })
+    if (!resolvedMediaPath.startsWith(resolvedMediaDir)) {
+        return new Response("Media has a path that is not inside the media directory", { status: 500 })
     }
 
     try {
-        if (submission.type === "video") {
-            const { size } = await fs.stat(resolvedSubmissionPath)
-            const stream = createReadStream(resolvedSubmissionPath)
+        if (media.type === "video") {
+            const { size } = await fs.stat(resolvedMediaPath)
+            const stream = createReadStream(resolvedMediaPath)
 
             const webStream = Readable.toWeb(stream) as ReadableStream<Uint8Array>
 
@@ -45,7 +39,7 @@ export async function GET(event: RequestEvent) {
             })
 
         } else {
-            const media = await fs.readFile(resolvedSubmissionPath);
+            const media = await fs.readFile(resolvedMediaPath);
 
             return new Response(new Uint8Array(media), {
                 headers: {
@@ -57,5 +51,4 @@ export async function GET(event: RequestEvent) {
     } catch (e) {
         return new Response(`Could not read the media file: ${(e as Error).message ?? "unknown reason"}`, { status: 404 })
     }
-
 }

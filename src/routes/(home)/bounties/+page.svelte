@@ -2,25 +2,26 @@
     import ErrorHandlingForm from '$lib/client/ErrorHandlingForm.svelte';
     import GeneralFormDialog from '$lib/client/GeneralFormDialog.svelte';
     import PerItemFormDialog from '$lib/client/PerItemFormDialog.svelte';
+    import { renderMedia } from '$lib/client/RenderMedia.svelte';
     import { computeFileHash } from '$lib/hashMedia';
     import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
-    import { fileHashExists } from './bounties.remote';
+    import {
+        createBountyForm,
+        createSubmissionForm,
+        deleteSubmissionForm,
+        fileHashExists,
+    } from './bounties.remote';
 
     let { data }: { data: PageServerData & LayoutServerData } = $props();
 
-    let createModal: GeneralFormDialog;
+    let createModal: GeneralFormDialog<typeof createBountyForm>;
 
     let activeBounty = $state<string | null>(null);
 
     const threeDaysLater = new Date();
     threeDaysLater.setDate(threeDaysLater.getDate() + 3);
     const threeDaysLaterValue = threeDaysLater.toISOString().split('T')[0];
-
-    function getMediaLink(id: string) {
-        const params = new URLSearchParams({ id });
-        return '/bounties/submissionMedia?' + params.toString();
-    }
 
     let fileInput: HTMLInputElement;
 
@@ -79,32 +80,19 @@
             <tr>
                 <td>
                     {#each bounty.submissions as submission}
-                        {#if submission.mediaLocation !== null}
-                            <ErrorHandlingForm action="?/deleteSubmission">
+                        {#if submission.submitterId === data.user.id}
+                            <ErrorHandlingForm
+                                remoteForm={deleteSubmissionForm}
+                            >
                                 <input
-                                    type="hidden"
-                                    name="id"
+                                    hidden
+                                    name="submissionId"
                                     value={submission.id}
                                 />
-                                <button type="submit">remove submission</button>
+                                <button type="submit">Delete</button>
                             </ErrorHandlingForm>
-                            {#if submission.type === 'video'}
-                                <!-- svelte-ignore a11y_media_has_caption -->
-                                <video
-                                    src={getMediaLink(submission.id)}
-                                    width={submission.width}
-                                    height={submission.height}
-                                    controls
-                                ></video>
-                            {:else}
-                                <img
-                                    src={getMediaLink(submission.id)}
-                                    width={submission.width}
-                                    height={submission.height}
-                                    alt={'image submission'}
-                                />
-                            {/if}
                         {/if}
+                        {@render renderMedia(submission.media)}
                     {/each}
                 </td>
             </tr>
@@ -112,7 +100,7 @@
     </tbody>
 </table>
 
-<GeneralFormDialog action="?/create" bind:this={createModal}>
+<GeneralFormDialog remoteForm={createBountyForm} bind:this={createModal}>
     {#snippet header()}
         <h1>Create a Bounty</h1>
         <p>
@@ -155,9 +143,9 @@
 </GeneralFormDialog>
 
 <PerItemFormDialog
-    enctype="multipart/form-data"
-    action="?/submit"
     bind:activeElement={activeBounty}
+    remoteForm={createSubmissionForm}
+    enctype="multipart/form-data"
 >
     {#snippet header()}
         <h1>Submit Bounty</h1>
@@ -168,7 +156,7 @@
             be accepted. Video submissions will be cut off at 6 minutes.
         </p>
     {/snippet}
-    <input type="hidden" name="bounty" value={activeBounty} />
+    <input type="hidden" name="bountyId" value={activeBounty} />
     <label
         >Proof
         <input

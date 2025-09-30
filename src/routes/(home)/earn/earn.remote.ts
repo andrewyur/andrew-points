@@ -1,51 +1,45 @@
 import * as v from 'valibot';
-import { command, getRequestEvent } from "$app/server";
+import { form } from "$app/server";
 import { verify } from 'hcaptcha';
 import { HCAPTCHA_SECRET } from '$env/static/private';
 import { advanceEarnSession, completeEarnSessionFromUser, createEarnSession, getEarnSessionFromUser } from './earnSession';
+import { extractUser } from '$lib/server/user';
+import { redirect } from '@sveltejs/kit';
 
-type CommandResponse = { ok: true, redirect?: true } | { ok: false, reason: string };
+export const verifyCaptchaForm = form(v.object({
+    token: v.pipe(v.string(), v.nonEmpty())
+}), async ({ token }) => {
+    try {
+        const user = extractUser();
 
-export const verifyCaptcha = command(v.string(), async (token): Promise<CommandResponse> => {
-    const response: { success: boolean } = await verify(HCAPTCHA_SECRET, token)
+        const response: { success: boolean } = await verify(HCAPTCHA_SECRET, token)
+        if (!response.success) throw Error("failed to validate captcha")
 
-    if (!response.success) {
-        return { ok: false, reason: "failed to validate captcha" }
+        const session = await getEarnSessionFromUser(user.id);
+
+        if (!session) throw Error("User has no current earn session!")
+
+        if (session.remaining === 0) {
+            await completeEarnSessionFromUser(user.id)
+            return { value: "completed" }
+        } else {
+            await advanceEarnSession(user.id)
+        }
+    } catch (e) {
+        return { error: `Could not verify captcha: ${(e as Error).message}` }
     }
-
-    const request = getRequestEvent()
-
-    if (!request.locals.user) {
-        return { ok: false, reason: "User is not logged in" }
-    }
-
-    const session = await getEarnSessionFromUser(request.locals.user.id);
-
-    if (!session) {
-        return { ok: false, reason: "User has no current earn session!" }
-    }
-
-    if (session.remaining === 0) {
-        await completeEarnSessionFromUser(request.locals.user.id)
-        return { ok: true, redirect: true }
-    }
-
-    await advanceEarnSession(request.locals.user.id)
-    return { ok: true }
 })
 
-export const startCaptchaSession = command(async (): Promise<CommandResponse> => {
-    const request = getRequestEvent()
+export const startCaptchaSessionForm = form(v.object({}), async () => {
+    try {
+        const user = extractUser()
+        const session = await getEarnSessionFromUser(user.id)
 
-    if (!request.locals.user) {
-        return { ok: false, reason: "User is not logged in" }
+        if (!session) {
+            await createEarnSession(user.id)
+        }
+    } catch (e) {
+        return { error: `Could not start Captcha Session: ${(e as Error).message}` }
     }
-
-    const session = await getEarnSessionFromUser(request.locals.user.id)
-
-    if (!session) {
-        await createEarnSession(request.locals.user.id)
-    }
-
-    return { ok: true }
+    redirect(303, "/earn/captcha")
 })

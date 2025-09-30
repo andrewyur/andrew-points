@@ -1,20 +1,26 @@
-<script lang="ts" generics="Activator">
+<script
+    lang="ts"
+    generics="Activator, RemoteFormType extends RemoteForm<any, undefined | { error: string } | { value: unknown }>"
+>
     import type { Snippet } from 'svelte';
     import type { HTMLFormAttributes } from 'svelte/elements';
     import ErrorHandlingForm from './ErrorHandlingForm.svelte';
+    import type { RemoteForm } from '@sveltejs/kit';
 
     let dialog: HTMLDialogElement;
-    let form: ErrorHandlingForm;
+    let form: ErrorHandlingForm<RemoteFormType>;
 
     let {
         children,
         formContents,
         activator = $bindable(),
+        remoteForm,
         ...rest
     }: {
         children: Snippet;
         formContents: Snippet;
         activator?: Activator | null;
+        remoteForm: RemoteFormType;
     } & Partial<HTMLFormAttributes> = $props();
 
     if (activator !== undefined) {
@@ -34,7 +40,12 @@
     };
 </script>
 
-<ErrorHandlingForm bind:this={form} {...rest} children={formContents} />
+<ErrorHandlingForm
+    bind:this={form}
+    {...rest}
+    {remoteForm}
+    children={formContents}
+/>
 
 <dialog bind:this={dialog}>
     {@render children()}

@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import path from 'path';
 
 
-export async function proceessMedia(file: File, outputFolder: string, filename: string): Promise<{
+export async function processFile(file: File, outputFolder: string, filename: string): Promise<{
     width: number,
     height: number,
     type: 'image' | 'video'

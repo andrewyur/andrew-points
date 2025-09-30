@@ -1,7 +1,7 @@
 import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
 import { createTransaction } from "$lib/server/points";
-import { and, desc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 
 export async function getTasks(userId: string, admin: boolean) {
@@ -20,18 +20,14 @@ export async function getTasks(userId: string, admin: boolean) {
                 poster: true
             }
         }) : null,
-        bountySubmissions: admin
-            ? await db
-                .select()
-                .from(table.bountySubmission)
-                .leftJoin(table.bounty, eq(table.bountySubmission.bountyId, table.bounty.id))
-                .where(
-                    and(
-                        eq(table.bountySubmission.state, "pending"),
-                        eq(table.bounty.completed, false)
-                    )
-                )
-            : null
+        bountySubmissions: admin ? await db.query.bountySubmission.findMany({
+            where: eq(table.bountySubmission.state, 'pending'),
+            with: {
+                bounty: true,
+                creator: true,
+                media: true
+            }
+        }) : null
     }
 }
 
@@ -60,14 +56,13 @@ export async function refundOffer(offerId: string) {
 }
 
 export async function acceptSubmission(submissionId: string) {
-    const submission = (await db.query.bountySubmission.findFirst({
-        where: eq(table.bountySubmission.id, submissionId)
-    }))!
-
     await db.transaction(async (tx) => {
+        const [submission] = await tx.update(table.bountySubmission).set({
+            state: "accepted"
+        }).where(eq(table.bountySubmission.id, submissionId)).returning()
         const [bounty] = await tx.update(table.bounty).set({
             completed: true,
-            fulfilledBy: submissionId
+            fulfilledBy: submissionId,
         }).where(eq(table.bounty.id, submission.bountyId)).returning()
         await createTransaction(submission.submitterId, bounty.reward, { type: "bounty_reward", bountyId: bounty.id }, tx)
     })

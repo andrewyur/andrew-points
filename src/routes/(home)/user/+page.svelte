@@ -1,22 +1,25 @@
 <script lang="ts">
 	import { Temporal } from 'temporal-polyfill';
-	import type { LayoutServerData } from './$types';
+	import type { LayoutServerData } from '../$types';
 	import type { PageServerData } from './$types';
 	import {
-		acceptSubmissionNotification,
-		confirmDisputedOfferNotification,
-		confirmOfferNotification,
-		disputeOfferNotification,
-		refundOfferNotification,
-		rejectSubmissionNotification,
+		acceptSubmissionForm,
+		adjustUserPoints,
+		confirmDisputedOfferForm,
+		confirmOfferForm,
+		disputeOfferForm,
+		refundDisputedOfferForm,
+		rejectSubmissionForm,
 	} from './userActions.remote';
-	import { refreshAll } from '$app/navigation';
 	import GeneralFormDialog from '$lib/client/GeneralFormDialog.svelte';
 	import { queryUsers } from '$lib/client/commands.remote';
+	import { renderMedia } from '$lib/client/RenderMedia.svelte';
+	import ErrorHandlingForm from '$lib/client/ErrorHandlingForm.svelte';
 
 	const { data }: { data: PageServerData & LayoutServerData } = $props();
 
-	let userPoints: GeneralFormDialog | null = $state(null);
+	let userPoints: GeneralFormDialog<typeof adjustUserPoints> | null =
+		$state(null);
 
 	const sortedTasks = $derived.by(() => {
 		const allTasks = [
@@ -41,7 +44,7 @@
 			) {
 				return item.purchasedAt!.valueOf();
 			} else {
-				return item.bounty_submission.submittedAt.valueOf();
+				return item.submittedAt.valueOf();
 			}
 		};
 
@@ -52,10 +55,15 @@
 		numeric: 'auto',
 	});
 
-	function getMediaLink(id: string) {
-		const params = new URLSearchParams({ id });
-		return '/bounties/submissionMedia?' + params.toString();
-	}
+	const formatDeadline = (date: Date) =>
+		formatter.format(
+			Math.ceil(
+				Temporal.Now.instant()
+					.until(Temporal.Instant.fromEpochMilliseconds(Number(date)))
+					.total('hours'),
+			),
+			'hour',
+		);
 </script>
 
 <h1>Hi, {data.user.username}!</h1>
@@ -66,7 +74,7 @@
 {#if data.user.admin}
 	<button onclick={userPoints?.show}>Edit User Points</button>
 
-	<GeneralFormDialog bind:this={userPoints}>
+	<GeneralFormDialog bind:this={userPoints} remoteForm={adjustUserPoints}>
 		<label>
 			User
 			<select name="user" required>
@@ -100,83 +108,43 @@
 			<p>
 				If you have recieved the goods/services listed in the offer "{task.title}"
 				from seller "{task.poster.username}", click confirm to release
-				their payment. The offer will be automatically confirmed {formatter.format(
-					Math.ceil(
-						Temporal.Now.instant()
-							.until(
-								Temporal.Instant.fromEpochMilliseconds(
-									task.completeBy!.getTime(),
-								),
-							)
-							.total('hours'),
-					),
-					'hour',
+				their payment. The offer will be automatically confirmed {formatDeadline(
+					task.completeBy!,
 				)}
 			</p>
-			<button
-				onclick={async () => {
-					await confirmOfferNotification(task.id);
-					refreshAll();
-				}}>Confirm</button
-			>
-			<button
-				onclick={async () => {
-					await disputeOfferNotification(task.id);
-					refreshAll();
-				}}>Dispute</button
-			>
+			<ErrorHandlingForm remoteForm={confirmOfferForm}>
+				<input hidden name="offerId" value={task.id} />
+				<button type="submit">Confirm</button>
+			</ErrorHandlingForm>
+			<ErrorHandlingForm remoteForm={disputeOfferForm}>
+				<input hidden name="offerId" value={task.id} />
+				<button type="submit">Dispute</button>
+			</ErrorHandlingForm>
 		{:else if task.taskType === 'disputedOffer'}
 			<h2>Settle Offer Dispute</h2>
 			<p>{task.title}</p>
 			<p>{task.description}</p>
-			<button
-				onclick={async () => {
-					await confirmDisputedOfferNotification(task.id);
-					refreshAll();
-				}}>Confirm</button
-			>
-			<button
-				onclick={async () => {
-					await refundOfferNotification(task.id);
-					refreshAll();
-				}}>Refund</button
-			>
+			<ErrorHandlingForm remoteForm={confirmDisputedOfferForm}>
+				<input hidden name="offerId" value={task.id} />
+				<button type="submit">Confirm</button>
+			</ErrorHandlingForm>
+			<ErrorHandlingForm remoteForm={refundDisputedOfferForm}>
+				<input hidden name="offerId" value={task.id} />
+				<button type="submit">Refund</button>
+			</ErrorHandlingForm>
 		{:else}
-			<h2>Settle Offer Dispute</h2>
+			<h2>Approve/deny bounty submission</h2>
 			<p>{task.bounty?.title}</p>
 			<p>{task.bounty?.fulfillmentCriteria}</p>
-			{#if task.bounty_submission?.type === 'video'}
-				<!-- svelte-ignore a11y_media_has_caption -->
-				<video
-					src={getMediaLink(task.bounty_submission.id)}
-					width={task.bounty_submission?.width}
-					height={task.bounty_submission?.height}
-					controls
-				></video>
-			{:else}
-				<img
-					src={getMediaLink(task.bounty_submission.id)}
-					width={task.bounty_submission?.width}
-					height={task.bounty_submission?.height}
-					alt={'image submission'}
-				/>
-			{/if}
-			<button
-				onclick={async () => {
-					await acceptSubmissionNotification(
-						task.bounty_submission.id,
-					);
-					refreshAll();
-				}}>Confirm</button
-			>
-			<button
-				onclick={async () => {
-					await rejectSubmissionNotification(
-						task.bounty_submission.id,
-					);
-					refreshAll();
-				}}>Refund</button
-			>
+			{@render renderMedia(task.media)}
+			<ErrorHandlingForm remoteForm={acceptSubmissionForm}>
+				<input hidden name="submissionId" value={task.id} />
+				<button type="submit">Accept</button>
+			</ErrorHandlingForm>
+			<ErrorHandlingForm remoteForm={rejectSubmissionForm}>
+				<input hidden name="submissionId" value={task.id} />
+				<button type="submit">Reject</button>
+			</ErrorHandlingForm>
 		{/if}
 	</div>
 {/each}

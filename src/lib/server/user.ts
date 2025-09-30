@@ -1,6 +1,8 @@
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 import * as table from "./db/schema"
+import { getRequestEvent } from "$app/server";
+import { redirect } from "@sveltejs/kit";
 
 export async function getUserFromId(id: string) {
     return await db.query.user.findFirst({
@@ -43,4 +45,14 @@ export async function userExists(id: string) {
     const user = await getUserFromId(id);
 
     return user != undefined
+}
+
+export function extractUser() {
+    const { locals } = getRequestEvent();
+
+    if (!locals.user) {
+        redirect(302, "/")
+    }
+
+    return locals.user;
 }

@@ -2,6 +2,7 @@
     import ConfirmationForm from '$lib/client/ConfirmationForm.svelte';
     import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
+    import { redeemItemForm } from './redeem.remote';
     import type { Redeemable } from './redeemables';
 
     let { data }: { data: PageServerData & LayoutServerData } = $props();
@@ -33,17 +34,13 @@
     </tbody>
 </table>
 
-<ConfirmationForm bind:activator={activeRedeemable}>
-    {#snippet formContents()}
-        <input
-            type="hidden"
-            name="redeemable_name"
-            value={activeRedeemable?.name}
-        />
-    {/snippet}
+<ConfirmationForm remoteForm={redeemItemForm} bind:activator={activeRedeemable}>
     <h1>Are you sure?</h1>
     <p>You are about to spend {activeRedeemable?.cost} points.</p>
     <p>This is an irreversible action.</p>
+    {#snippet formContents()}
+        <input hidden name="redeemableId" value={activeRedeemable?.id!} />
+    {/snippet}
 </ConfirmationForm>
 
 <dialog bind:this={redeemedDialog}>
