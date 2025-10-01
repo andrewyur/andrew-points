@@ -43,8 +43,8 @@ export async function GET(event: RequestEvent) {
 
             return new Response(new Uint8Array(media), {
                 headers: {
-                    "Content-Type": "image/webp",
-                    "Content-Disposition": 'attachment; filename="media.webp"',
+                    "Content-Type": "image/jpeg",
+                    "Content-Disposition": 'attachment; filename="media.jpeg"',
                 },
             });
         }

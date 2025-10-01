@@ -62,12 +62,12 @@
         <h1>Create a listing</h1>
     {/snippet}
     <label>
-        cost
-        <input type="number" step="0" min="0" name="cost" required />
+        title
+        <input type="text" name="title" required maxlength="80" />
     </label>
     <label>
-        title
-        <input type="text" name="title" required />
+        cost
+        <input type="number" step="0" min="0" name="cost" required />
     </label>
     <label>
         description

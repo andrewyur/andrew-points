@@ -52,13 +52,23 @@ mini economy for lodge
           - scan for bounties with rejected: false
         - examine offer disputes
           - scan for offers in "disputed" state
-- [ ] discord bot
+- [x] discord bot
   - hook into guild, get display names for lodge discord
   - create function for creating notifications, notification types
   - call in appropriate places (bounty created, offer bought, etc.)
   - PM users for private notifications
   - #points channel for announcements
+- [x] misc stuff
+  - pages for viewing completed offers and bounties
+  - link to these in discord notifs
+  - notification table, combine website notifications with discord private messages
+  - task for offer sellers to confirm that they have given goods (?)
+  - create final design for app bar layout
+    - decide where notifications will be and how they will work
 - [ ] style pages
   - prioritizing mobile view
   - daisyui.com
+  - notifications will be displayed in app bar
+  - notifications point to offer/bounty pages, where tasks will reside
 - [ ] logger with file transport
+- [ ] extract discord client to separate process, or convert cron processes to endpoint

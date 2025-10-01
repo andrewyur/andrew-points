@@ -33,9 +33,7 @@
     {...remoteForm.enhance(async ({ submit }) => {
         submitting = true;
         try {
-            console.log(remoteForm);
             await submit();
-            console.log(remoteForm.result);
             if (remoteForm.result && 'error' in remoteForm.result) {
                 errorState.set(remoteForm.result.error);
             }

@@ -9,6 +9,7 @@ export const user = sqliteTable('user', {
 	id: text('id').primaryKey().$defaultFn(createId),
 	discordId: text('discord_id').notNull().unique(),
 	username: text('username').notNull(),
+	displayName: text('display_name').notNull(),
 	picture: text('picture'),
 	admin: integer('admin', { mode: 'boolean' }).notNull().default(false),
 });
@@ -34,6 +35,10 @@ export const bountyRelations = relations(bounty, ({ one, many }) => ({
 	creator: one(user, {
 		fields: [bounty.creatorId],
 		references: [user.id],
+	}),
+	fulfiller: one(bountySubmission, {
+		fields: [bounty.fulfilledBy],
+		references: [bountySubmission.id]
 	}),
 	submissions: many(bountySubmission)
 }))
@@ -130,6 +135,34 @@ export const media = sqliteTable('media', {
 	width: integer('width').notNull(),
 	type: text('type').notNull()
 })
+
+export const notification = sqliteTable("notification", {
+	id: text('id').primaryKey().$defaultFn(createId),
+	userId: text('user_id').notNull().references(() => user.id),
+	type: text('type').notNull(),
+	createdAt: integer('created_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+	offerId: text("offer_id").references(() => offer.id),
+	submissionId: text("submission_id").references(() => bountySubmission.id),
+	bountyId: text("bounty_id").references(() => bounty.id),
+	redeemerId: text('redeemer_id').references(() => user.id),
+	redeemableId: text('redeemable_id'),
+	ledgerId: text('ledger_id').references(() => ledgerEntry.id),
+})
+
+export const notificationRelations = relations(notification, ({ one }) => ({
+	user: one(user, {
+		fields: [notification.userId],
+		references: [user.id]
+	}),
+	offer: one(offer),
+	submission: one(bountySubmission),
+	bounty: one(bounty),
+	redeemer: one(user, {
+		fields: [notification.redeemerId],
+		references: [user.id]
+	}),
+	ledger: one(ledgerEntry),
+}))
 
 export type Session = typeof session.$inferSelect;
 

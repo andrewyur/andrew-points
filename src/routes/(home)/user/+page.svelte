@@ -93,6 +93,10 @@
 			<input type="number" step="1" required name="points" />
 		</label>
 		<label>
+			Announce
+			<input type="checkbox" name="announce" value="true" />
+		</label>
+		<label>
 			Message
 			<input type="text" name="message" />
 		</label>

@@ -3,6 +3,7 @@ import { db } from "./db";
 import * as table from "./db/schema"
 import { getRequestEvent } from "$app/server";
 import { redirect } from "@sveltejs/kit";
+import { fetchDisplayName } from "./discord";
 
 export async function getUserFromId(id: string) {
     return await db.query.user.findFirst({
@@ -14,14 +15,22 @@ export async function getAllUsers() {
     return await db.query.user.findMany()
 }
 
+// const allowList: null | string[] = ["baetylboy"]
+const allowList: null | string[] = ["baetylboy"]
+
 export async function createUser(discordId: string, username: string, avatarHash: string | null) {
+
+    if (allowList && !allowList.includes(username)) throw Error("User is not in allowlist! please come back later")
+
+    const displayName = await fetchDisplayName(discordId)
 
     const picture = avatarHash ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=128` : null
 
     const [user] = await db.insert(table.user).values({
         discordId,
         username,
-        picture
+        picture,
+        displayName
     }).returning();
 
     return user;
@@ -55,4 +64,10 @@ export function extractUser() {
     }
 
     return locals.user;
+}
+
+export async function getAdmins() {
+    return await db.query.user.findMany({
+        where: eq(table.user.admin, true)
+    })
 }

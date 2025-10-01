@@ -33,7 +33,17 @@ export async function getBounties(userId: string) {
 
 export async function getBountyById(bountyId: string) {
     return await db.query.bounty.findFirst({
-        where: eq(table.bounty.id, bountyId)
+        where: eq(table.bounty.id, bountyId),
+        with: {
+            creator: true,
+            fulfiller: {
+                with: {
+                    creator: true,
+                    media: true
+                }
+            },
+            submissions: true
+        }
     })
 }
 

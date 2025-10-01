@@ -28,15 +28,17 @@ export type Context = {
 // ])
 
 
-export async function createTransaction(userId: string, amount: number, context: Context, client?: DatabaseTransactionClient): Promise<void> {
-    await (client ?? db).insert(table.ledgerEntry).values({
+export async function createTransaction(userId: string, amount: number, context: Context, client?: DatabaseTransactionClient) {
+    const [ledgerEntry] = await (client ?? db).insert(table.ledgerEntry).values({
         userId,
         amount: Math.round(amount),
         type: context.type,
         message: "message" in context ? context.message : undefined,
         bountyId: "bountyId" in context ? context.bountyId : undefined,
         offerId: "offerId" in context ? context.offerId : undefined,
-    })
+    }).returning()
+
+    return ledgerEntry
 }
 
 export async function getUserPoints(userId: string): Promise<number> {

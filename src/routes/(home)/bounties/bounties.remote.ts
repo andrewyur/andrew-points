@@ -6,6 +6,7 @@ import * as v from "valibot"
 import { createBounty, createBountySubmission, deleteBountySubmission, getBountyById, getBountySubmissions, getSubmissionById } from "./bounties";
 import { extractUser } from "$lib/server/user";
 import { getUserPoints } from "$lib/server/points";
+import { discordAnnouncement } from "$lib/server/discord";
 
 export const fileHashExists = query(v.string(), async (hash: string) => {
     const existing = await db.query.media.findFirst({
@@ -40,7 +41,7 @@ export const deleteSubmissionForm = form(v.object({
 
 
 export const createBountyForm = form(v.object({
-    title: v.pipe(v.string(), v.nonEmpty()),
+    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(80)),
     fulfillmentCriteria: v.pipe(v.string(), v.nonEmpty()),
     reward: v.pipe(v.string(), v.transform(Number), v.integer()),
     deadline: v.pipe(v.string(), v.isoDate(), v.transform(s => new Date(s)))
@@ -48,11 +49,16 @@ export const createBountyForm = form(v.object({
     try {
         const user = extractUser()
         const userPoints = await getUserPoints(user.id);
-        if (userPoints < reward) throw Error("User does not have enough points to create a bounty")
+        if (userPoints * 0.05 > reward) throw Error("Bounty reward must be at least 5% of the user's points")
+        if (userPoints < reward) throw Error("User does not have enough points to create the bounty")
 
-        await createBounty(user.id, title, fulfillmentCriteria, deadline, reward)
+        const bounty = await createBounty(user.id, title, fulfillmentCriteria, deadline, reward)
+        await discordAnnouncement({
+            type: "bounty_placed",
+            bountyId: bounty.id
+        })
     } catch (e) {
-        return { error: `Could not create bounty form: ${(e as Error).message}` }
+        return { error: `Could not create the bounty: ${(e as Error).message}` }
     }
 })
 
@@ -72,7 +78,11 @@ export const createSubmissionForm = form(v.object({
 
         if (bountySubmissions.some(s => s.submitterId === user.id)) throw Error("User has already created a submission for this bounty");
 
-        await createBountySubmission(user.id, bountyId, media)
+        const submission = await createBountySubmission(user.id, bountyId, media)
+        discordAnnouncement({
+            type: "bounty_submission_created",
+            submissionId: submission.id
+        })
     } catch (e) {
         return { error: `Could not create Bounty submission: ${(e as Error).message}` }
     }

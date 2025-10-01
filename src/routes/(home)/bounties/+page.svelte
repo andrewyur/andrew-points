@@ -104,16 +104,17 @@
     {#snippet header()}
         <h1>Create a Bounty</h1>
         <p>
-            Points will be subtracted on bounty creation. If not completed, the
-            bounty will expire after the deadline, returning the points to your
-            account. Other users can attempt to complete a bounty by uploading a
-            picture or video as proof of completion, which can be approved or
-            rejected by an admin, based on your completion criteria.
+            Points will be subtracted on bounty creation. Bounty reward must be
+            at least 5% of your points. If not completed, the bounty will expire
+            after the deadline, returning the points to your account. Other
+            users can attempt to complete a bounty by uploading a picture or
+            video as proof of completion, which can be approved or rejected by
+            an admin, based on your completion criteria.
         </p>
     {/snippet}
     <label>
         Title
-        <input name="title" required />
+        <input name="title" required maxlength="80" />
     </label>
     <label>
         Fulfillment Criteria
@@ -135,7 +136,7 @@
             step="1"
             required
             type="number"
-            min="0"
+            min={Math.round(data.userPoints * 0.05)}
             max={data.userPoints}
         />
     </label>

@@ -52,7 +52,14 @@ export async function GET(event: RequestEvent): Promise<Response> {
         }
     }
 
-    const user = existingUser ?? await createUser(discordUser.id, discordUser.username, discordUser.avatar);
+    let user;
+    try {
+        user = existingUser ?? await createUser(discordUser.id, discordUser.username, discordUser.avatar);
+    } catch (e) {
+        return new Response((e as Error).message, {
+            status: 400
+        })
+    }
 
     const sessionToken = auth.generateSessionToken()
     const session = await auth.createSession(sessionToken, user.id)

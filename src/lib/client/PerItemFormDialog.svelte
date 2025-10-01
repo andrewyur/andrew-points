@@ -20,8 +20,6 @@
         remoteForm: RemoteFormType;
     } & Partial<HTMLFormAttributes> = $props();
 
-    console.log(rest);
-
     let modal: HTMLDialogElement;
     let form: ErrorHandlingForm<RemoteFormType>;
 

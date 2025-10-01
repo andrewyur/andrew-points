@@ -3,6 +3,8 @@ import { extractUser, userExists } from "$lib/server/user";
 import * as v from "valibot"
 import { buyOffer, createOffer, deleteOffer, getOfferById } from "./offers";
 import { getUserPoints } from "$lib/server/points";
+import { discordAnnouncement } from "$lib/server/discord";
+import { createNotification } from "$lib/server/notifications";
 
 export const deleteOfferForm = form(v.object({
     offerId: v.pipe(v.string(), v.uuid())
@@ -37,6 +39,11 @@ export const buyOfferForm = form(v.object({
         if (points < offer.cost) throw Error("User does not have enough points to buy the offer")
 
         await buyOffer(offerId, user.id)
+        if (!offer.visibleTo) {
+            await discordAnnouncement({ type: "offer_purchased", offerId })
+        }
+        await createNotification(offer.posterId, { type: "offer_purchased", offerId })
+        await createNotification(user.id, { type: "offer_confirmation", offerId })
     } catch (e) {
         return { error: `Could not buy Offer: ${(e as Error).message}` }
     }
@@ -44,7 +51,7 @@ export const buyOfferForm = form(v.object({
 
 export const createOfferForm = form(v.object({
     cost: v.pipe(v.string(), v.transform(Number), v.integer()),
-    title: v.pipe(v.string(), v.nonEmpty()),
+    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(80)),
     description: v.pipe(v.string(), v.nonEmpty()),
     visibleTo: v.union([v.pipe(v.string(), v.uuid()), v.pipe(v.literal(''), v.transform(() => null))])
 }), async ({ cost, title, description, visibleTo }) => {
@@ -53,7 +60,15 @@ export const createOfferForm = form(v.object({
 
         if (visibleTo !== null && !(await userExists(visibleTo))) throw Error("VisibleTo does not correspond to an entry in the users table")
 
-        await createOffer(user.id, cost, title, description, visibleTo)
+        const offer = await createOffer(user.id, cost, title, description, visibleTo)
+        if (visibleTo) {
+            await createNotification(visibleTo, { type: "private_offer_posted", offerId: offer.id })
+        } else {
+            await discordAnnouncement({
+                type: "offer_posted",
+                offerId: offer.id
+            })
+        }
     } catch (e) {
         return { error: `Could not create Offer: ${(e as Error).message}` }
     }

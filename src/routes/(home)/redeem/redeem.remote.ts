@@ -3,6 +3,10 @@ import { extractUser } from "$lib/server/user";
 import * as v from "valibot";
 import { redeemableItems } from "./redeemables";
 import { createTransaction, getUserPoints } from "$lib/server/points";
+import { createNotification } from "$lib/server/notifications";
+import { db } from "$lib/server/db";
+import { eq } from "drizzle-orm";
+import * as table from "$lib/server/db/schema"
 
 export const redeemItemForm = form(v.object({
     redeemableId: v.string()
@@ -19,6 +23,13 @@ export const redeemItemForm = form(v.object({
 
         await createTransaction(user.id, -redeemedItem.cost, {
             type: `redeemed_reward#${redeemedItem.id}`,
+        })
+
+        const admins = await db.query.user.findMany({
+            where: eq(table.user.admin, true)
+        })
+        admins.forEach((admin) => {
+            createNotification(admin.id, { type: "item_redeemed", redeemableId, redeemerId: user.id })
         })
     } catch (e) {
         return { error: `Could not redeem Item: ${(e as Error).message}` }
