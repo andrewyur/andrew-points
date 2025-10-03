@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit";
-import { getBountyById } from "../../bounties";
+import { getBountyById } from "../bounties";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params }) => {

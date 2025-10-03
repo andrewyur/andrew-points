@@ -21,7 +21,7 @@ export const redeemItemForm = form(v.object({
 
         if (userPoints < redeemedItem.cost) throw Error("You do not have enough points to redeem this item")
 
-        await createTransaction(user.id, -redeemedItem.cost, {
+        const ledger = await createTransaction(user.id, -redeemedItem.cost, {
             type: `redeemed_reward#${redeemedItem.id}`,
         })
 
@@ -29,7 +29,7 @@ export const redeemItemForm = form(v.object({
             where: eq(table.user.admin, true)
         })
         admins.forEach((admin) => {
-            createNotification(admin.id, { type: "item_redeemed", redeemableId, redeemerId: user.id })
+            createNotification(admin.id, { type: "item_redeemed", ledgerId: ledger.id })
         })
     } catch (e) {
         return { error: `Could not redeem Item: ${(e as Error).message}` }

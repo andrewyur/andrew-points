@@ -99,10 +99,10 @@ export async function discordAnnouncement(announcement: Announcement) {
             if (!bounty) throw Error("No bounty with that id");
 
             if (announcement.type === "bounty_placed") {
-                channel.send(`${bounty.creator.displayName} has just placed a bounty with a ${bounty.reward} points reward. See more: ${APP_URL}/bounties`)
+                channel.send(`${bounty.creator.displayName} 𝓱𝓪𝓼 𝓳𝓾𝓼𝓽 𝓹𝓵𝓪𝓬𝓮𝓭 𝓪 𝓫𝓸𝓾𝓷𝓽𝔂 𝔀𝓲𝓽𝓱 𝓪 ${bounty.reward} 𝓹𝓸𝓲𝓷𝓽𝓼 𝓻𝓮𝔀𝓪𝓻𝓭! 𝕾𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/bounties`)
             } else {
                 if (!bounty.fulfiller) throw Error("Bounty missing fulfillment information")
-                channel.send(`${bounty.fulfiller.creator.displayName}'s submission to the bounty "${bounty.title}" was accepted, earning him ${bounty.reward}`)
+                channel.send(`${bounty.fulfiller.creator.displayName}'𝓼 𝓼𝓾𝓫𝓶𝓲𝓼𝓼𝓲𝓸𝓷 𝓽𝓸 𝓽𝓱𝓮 𝓫𝓸𝓾𝓷𝓽𝔂 "${bounty.title}"𝔀𝓪𝓼 𝓪𝓬𝓬𝓮𝓹𝓽𝓮𝓭, 𝓮𝓪𝓻𝓷𝓲𝓷𝓰 𝓽𝓱𝓮𝓶 ${bounty.reward} 𝓹𝓸𝓲𝓷𝓽𝓼! 𝕾𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/bounties/b/${bounty.id}`)
             }
             break;
         case "bounty_submission_created":
@@ -115,7 +115,7 @@ export async function discordAnnouncement(announcement: Announcement) {
             })
             if (!submission) throw Error("No submission with that id");
 
-            channel.send(`${submission.creator.displayName} just created a new submission for a bounty! See more at: ${APP_URL}/bounties`)
+            channel.send(`${submission.creator.displayName}𝓳𝓾𝓼𝓽 𝓬𝓻𝓮𝓪𝓽𝓮𝓭 𝓪 𝓷𝓮𝔀 𝓼𝓾𝓫𝓶𝓲𝓼𝓼𝓲𝓸𝓷 𝓯𝓸𝓻 𝓪 𝓫𝓸𝓾𝓷𝓽𝔂! 𝕾𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/bounties`)
             break;
         case "offer_posted":
         case "offer_purchased":
@@ -130,10 +130,10 @@ export async function discordAnnouncement(announcement: Announcement) {
             if (offer.visibleTo) throw Error("Offer is private");
 
             if (announcement.type === "offer_posted") {
-                channel.send(`${offer.poster.displayName} just posted a public offer for ${offer.cost} points! See more at ${APP_URL}/marketplace`)
+                channel.send(`${offer.poster.displayName} 𝓳𝓾𝓼𝓽 𝓹𝓸𝓼𝓽𝓮𝓭 𝓪 𝓹𝓾𝓫𝓵𝓲𝓬 𝓸𝓯𝓯𝓮𝓻 𝓯𝓸𝓻 ${offer.cost} 𝓹𝓸𝓲𝓷𝓽𝓼! 𝕾𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/marketplace`)
             } else {
                 if (!offer.buyer) throw Error("Offer missing buyer information")
-                channel.send(`${offer.buyer.displayName} just purchased the offer "${offer.title}" for ${offer.cost} points!`)
+                channel.send(`${offer.buyer.displayName} 𝓳𝓾𝓼𝓽 𝓹𝓾𝓻𝓬𝓱𝓪𝓼𝓮𝓭 𝓪𝓷 𝓸𝓯𝓯𝓮𝓻 "${offer.title}" 𝓯𝓸𝓻 ${offer.cost} 𝓹𝓸𝓲𝓷𝓽𝓼! 𝕾𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/marketplace/${offer.id}`)
             }
             break;
         case "item_redeemed":
@@ -143,14 +143,14 @@ export async function discordAnnouncement(announcement: Announcement) {
             if (!redeemable) throw Error("No redeemable with that id")
             if (!redeemer) throw Error("No user with that id")
 
-            channel.send(`${redeemer.displayName} just redeemed ${redeemable.cost} for the item "${redeemable.name}"!`)
+            channel.send(`${redeemer.displayName} 𝓳𝓾𝓼𝓽 𝓻𝓮𝓭𝓮𝓮𝓶𝓮𝓭 ${redeemable.cost}𝓯𝓸𝓻 𝓽𝓱𝓮 𝓲𝓽𝓮𝓶 "${redeemable.name}"!`)
             break;
         case "user_joined":
             const user = await getUserFromId(announcement.userId)
 
             if (!user) throw Error("No user with that id")
 
-            channel.send(`${user.displayName} just joined! Welcome!`)
+            channel.send(`${user.displayName} 𝓳𝓾𝓼𝓽 𝓳𝓸𝓲𝓷𝓮𝓭! 𝓦𝓮𝓵𝓬𝓸𝓶𝓮!`)
             break;
         case "admin_point_adjustment":
             const ledgerEntry = await db.query.ledgerEntry.findFirst({
@@ -161,7 +161,7 @@ export async function discordAnnouncement(announcement: Announcement) {
             })
             if (!ledgerEntry) throw Error("no ledger entry with that id")
 
-            channel.send(`admin just ${ledgerEntry.amount > 0 ? "gave" : "took"} ${Math.abs(ledgerEntry.amount)} ${ledgerEntry.amount > 0 ? "to" : "from"} ${ledgerEntry.user.displayName}: ${ledgerEntry.message ?? "No reason"}`)
+            channel.send(`𝓐𝓭𝓶𝓲𝓷 𝓳𝓾𝓼𝓽 ${ledgerEntry.amount > 0 ? "𝓰𝓪𝓿𝓮" : "𝓽𝓸𝓸𝓴"} ${Math.abs(ledgerEntry.amount)} 𝓹𝓸𝓲𝓷𝓽𝓼 ${ledgerEntry.amount > 0 ? "𝓽𝓸" : "𝓯𝓻𝓸𝓶"} ${ledgerEntry.user.displayName}: ${ledgerEntry.message ?? "𝓷𝓸 𝓻𝓮𝓪𝓼𝓸𝓷"}`)
     }
 }
 
@@ -180,37 +180,37 @@ export async function discordPrivateMessage(userId: string, message: Notificatio
 
     switch (message.type) {
         case "bounty_completed":
-            user.send(`One of your bounties was completed! see more: ${APP_URL}/bounties/b/${message.bountyId}`)
+            user.send(`𝓞𝓷𝓮 𝓸𝓯 𝔂𝓸𝓾𝓻 𝓫𝓸𝓾𝓷𝓽𝓲𝓮𝓼 𝔀𝓪𝓼 𝓬𝓸𝓶𝓹𝓵𝓮𝓽𝓮𝓭! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/bounties/b/${message.bountyId}`)
             break;
         case "bounty_expired":
-            user.send(`One of your bounties expired! see more: ${APP_URL}/bounties/b/${message.bountyId}`)
+            user.send(`𝓞𝓷𝓮 𝓸𝓯 𝔂𝓸𝓾𝓻 𝓫𝓸𝓾𝓷𝓽𝓲𝓮𝓼 𝓮𝔁𝓹𝓲𝓻𝓮𝓭! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/bounties/b/${message.bountyId}`)
             break;
         case "bounty_submission_accepted":
-            user.send(`One of your bounty submissions was accepted! see more: ${APP_URL}/bounties/s/${message.submissionId}`)
+            user.send(`𝓞𝓷𝓮 𝓸𝓯 𝔂𝓸𝓾𝓻 𝓫𝓸𝓾𝓷𝓽𝔂 𝓼𝓾𝓫𝓶𝓲𝓼𝓼𝓲𝓸𝓷𝓼 𝔀𝓪𝓼 𝓪𝓬𝓬𝓮𝓹𝓽𝓮𝓭! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/bounties/${message.bountyId}`)
             break;
         case "bounty_submission_rejected":
-            user.send(`One of your bounty submissions was rejected! see more: ${APP_URL}/bounties/s/${message.submissionId}`)
+            user.send(`𝓞𝓷𝓮 𝓸𝓯 𝔂𝓸𝓾𝓻 𝓫𝓸𝓾𝓷𝓽𝔂 𝓼𝓾𝓫𝓶𝓲𝓼𝓼𝓲𝓸𝓷𝓼 𝔀𝓪𝓼 𝓻𝓮𝓳𝓮𝓬𝓽𝓮𝓭! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/bounties/${message.bountyId}`)
             break;
         case "item_redeemed":
-            user.send(`Someone just redeemed ${message.redeemableId}! see more: ${APP_URL}/user`)
+            user.send(`𝓢𝓸𝓶𝓮𝓸𝓷𝓮 𝓳𝓾𝓼𝓽 𝓻𝓮𝓭𝓮𝓮𝓶𝓮𝓭 an item! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/statistics?transactionId=${message.ledgerId}`)
             break;
         case "offer_confirmation":
-            user.send(`You need to confirm that you have recieved items from an offer! see more: ${APP_URL}/marketplace/${message.offerId}`)
+            user.send(`𝓨𝓸𝓾 𝓷𝓮𝓮𝓭 𝓽𝓸 𝓬𝓸𝓷𝓯𝓲𝓻𝓶 𝓽𝓱𝓪𝓽 𝔂𝓸𝓾 𝓱𝓪𝓿𝓮 𝓻𝓮𝓬𝓲𝓮𝓿𝓮𝓭 𝓲𝓽𝓮𝓶𝓼 𝓯𝓻𝓸𝓶 𝓪𝓷 𝓸𝓯𝓯𝓮𝓻! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/marketplace/${message.offerId}`)
             break;
         case "offer_dispute":
-            user.send(`Someone just disputed an offer! see more ${APP_URL}/user`)
+            user.send(`𝓢𝓸𝓶𝓮𝓸𝓷𝓮 𝓳𝓾𝓼𝓽 𝓭𝓲𝓼𝓹𝓾𝓽𝓮𝓭 𝓪𝓷 𝓸𝓯𝓯𝓮𝓻! see more ${APP_URL}/user`)
             break;
         case "private_offer_posted":
-            user.send(`Someone posted an offer private to you! see more ${APP_URL}/marketplace/${message.offerId}`)
+            user.send(`𝓢𝓸𝓶𝓮𝓸𝓷𝓮 𝓹𝓸𝓼𝓽𝓮𝓭 𝓪𝓷 𝓸𝓯𝓯𝓮𝓻 𝓹𝓻𝓲𝓿𝓪𝓽𝓮 𝓽𝓸 𝔂𝓸𝓾! see more ${APP_URL}/marketplace/${message.offerId}`)
             break;
         case "offer_purchased":
-            user.send(`Someone just purchased one of your offers! ${APP_URL}/marketplace/${message.offerId}`)
+            user.send(`𝓢𝓸𝓶𝓮𝓸𝓷𝓮 𝓳𝓾𝓼𝓽 𝓹𝓾𝓻𝓬𝓱𝓪𝓼𝓮𝓭 𝓸𝓷𝓮 𝓸𝓯 𝔂𝓸𝓾𝓻 𝓸𝓯𝓯𝓮𝓻𝓼! ${APP_URL}/marketplace/${message.offerId}`)
             break;
         case "admin_points_adjustment":
-            user.send(`Admin just adjusted your points! see more: ${APP_URL}/user`)
+            user.send(`𝓐𝓭𝓶𝓲𝓷 𝓳𝓾𝓼𝓽 𝓪𝓭𝓳𝓾𝓼𝓽𝓮𝓭 𝔂𝓸𝓾𝓻 𝓹𝓸𝓲𝓷𝓽𝓼! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/user`)
             break;
         case "offer_completed":
-            user.send(`One of your offers was just completed! see more: ${APP_URL}/marketplace/${message.offerId}`)
+            user.send(`𝓞𝓷𝓮 𝓸𝓯 𝔂𝓸𝓾𝓻 𝓸𝓯𝓯𝓮𝓻𝓼 𝔀𝓪𝓼 𝓳𝓾𝓼𝓽 𝓬𝓸𝓶𝓹𝓵𝓮𝓽𝓮𝓭!  𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/marketplace/${message.offerId}`)
             break;
     }
 }

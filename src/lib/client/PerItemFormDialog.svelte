@@ -1,6 +1,6 @@
 <script
     lang="ts"
-    generics="ElementType, RemoteFormType extends RemoteForm<any, undefined | { error: string }>"
+    generics="ElementType, RemoteFormType extends RemoteForm<any, undefined | { error: string } | { value: unknown }> | Omit<RemoteForm<any, undefined | { error: string } | { value: unknown }>, 'for'>"
 >
     import type { Snippet } from 'svelte';
     import type { HTMLFormAttributes } from 'svelte/elements';

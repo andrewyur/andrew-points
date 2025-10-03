@@ -1,34 +1,45 @@
 <script
     lang="ts"
-    generics="RemoteFormType extends RemoteForm<any, undefined | { error: string } | { value: unknown }>"
+    generics="RemoteFormType extends RemoteForm<any, undefined | { error: string } | { value: unknown }> | Omit<RemoteForm<any, undefined | { error: string } | { value: unknown }>, 'for'>"
 >
     import type { Snippet } from 'svelte';
     import type { HTMLFormAttributes } from 'svelte/elements';
     import { errorState } from './status';
     import type { RemoteForm } from '@sveltejs/kit';
 
-    let submitting = $state(false);
+    $effect(() => {
+        if (submitting) {
+            form.querySelectorAll('input, textarea, select').forEach(
+                (i) => ((i as HTMLInputElement).disabled = true),
+            );
+        } else {
+            form.querySelectorAll('input, textarea, select').forEach(
+                (i) => ((i as HTMLInputElement).disabled = false),
+            );
+        }
+    });
 
     let form: HTMLFormElement;
 
-    export const submit = () => form.requestSubmit();
+    export const submit = () => {
+        form.requestSubmit();
+    };
 
-    const {
+    let {
         children,
         postSubmit,
         remoteForm,
+        submitting = $bindable(false),
         ...rest
     }: {
         children: Snippet;
         postSubmit?: () => void;
+        submitting?: boolean;
         remoteForm: RemoteFormType;
     } & Partial<HTMLFormAttributes> = $props();
 </script>
 
-<p hidden={!submitting}>Submitting form...</p>
-
 <form
-    hidden={submitting}
     bind:this={form}
     {...remoteForm.enhance(async ({ submit }) => {
         submitting = true;
@@ -43,6 +54,7 @@
             );
         }
         submitting = false;
+        form.reset();
         postSubmit?.();
     })}
     autocomplete="off"

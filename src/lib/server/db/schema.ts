@@ -142,10 +142,7 @@ export const notification = sqliteTable("notification", {
 	type: text('type').notNull(),
 	createdAt: integer('created_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
 	offerId: text("offer_id").references(() => offer.id),
-	submissionId: text("submission_id").references(() => bountySubmission.id),
 	bountyId: text("bounty_id").references(() => bounty.id),
-	redeemerId: text('redeemer_id').references(() => user.id),
-	redeemableId: text('redeemable_id'),
 	ledgerId: text('ledger_id').references(() => ledgerEntry.id),
 })
 
@@ -154,14 +151,18 @@ export const notificationRelations = relations(notification, ({ one }) => ({
 		fields: [notification.userId],
 		references: [user.id]
 	}),
-	offer: one(offer),
-	submission: one(bountySubmission),
-	bounty: one(bounty),
-	redeemer: one(user, {
-		fields: [notification.redeemerId],
-		references: [user.id]
+	offer: one(offer, {
+		fields: [notification.offerId],
+		references: [offer.id]
 	}),
-	ledger: one(ledgerEntry),
+	bounty: one(bounty, {
+		fields: [notification.bountyId],
+		references: [bounty.id]
+	}),
+	ledger: one(ledgerEntry, {
+		fields: [notification.ledgerId],
+		references: [ledgerEntry.id]
+	}),
 }))
 
 export type Session = typeof session.$inferSelect;
@@ -177,3 +178,5 @@ export type LedgerEntry = typeof ledgerEntry.$inferSelect;
 export type Offer = typeof offer.$inferSelect;
 
 export type Media = typeof media.$inferSelect;
+
+export type Notification = typeof notification.$inferInsert

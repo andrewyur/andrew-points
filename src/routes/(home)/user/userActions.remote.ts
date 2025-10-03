@@ -98,7 +98,7 @@ export const acceptSubmissionForm = form(v.object({
     try {
         const submission = await validateSubmissionId(submissionId)
         await acceptSubmission(submissionId)
-        await createNotification(submission.submitterId, { type: "bounty_submission_accepted", submissionId })
+        await createNotification(submission.submitterId, { type: "bounty_submission_accepted", bountyId: submission.bountyId })
     } catch (e) {
         return { error: `Could not complete the action: ${(e as Error).message}` }
     }
@@ -110,7 +110,7 @@ export const rejectSubmissionForm = form(v.object({
     try {
         const submission = await validateSubmissionId(submissionId)
         await rejectSubmission(submissionId)
-        await createNotification(submission.submitterId, { type: "bounty_submission_rejected", submissionId })
+        await createNotification(submission.submitterId, { type: "bounty_submission_rejected", bountyId: submission.bountyId })
     } catch (e) {
         return { error: `Could not complete the action: ${(e as Error).message}` }
     }

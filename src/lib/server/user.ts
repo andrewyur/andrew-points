@@ -24,7 +24,7 @@ export async function createUser(discordId: string, username: string, avatarHash
 
     const displayName = await fetchDisplayName(discordId)
 
-    const picture = avatarHash ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=128` : null
+    const picture = avatarHash ? `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256` : null
 
     const [user] = await db.insert(table.user).values({
         discordId,
@@ -37,7 +37,7 @@ export async function createUser(discordId: string, username: string, avatarHash
 }
 
 export async function updateUserAvatar(discordId: string, avatarHash: string) {
-    const picture = `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=128`
+    const picture = `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.png?size=256`
 
     db.update(table.user).set({
         picture
