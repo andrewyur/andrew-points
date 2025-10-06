@@ -23,14 +23,12 @@
     let modal: HTMLDialogElement | null = $state(null);
     let form: ErrorHandlingForm<RemoteFormType> | null = $state(null);
     let submitting = $state(false);
-    let delayedSubmit = $state(false);
-
-    $effect(() => {
-        setTimeout(() => (delayedSubmit = submitting), 100);
-    });
 
     export const show = () => modal?.showModal();
-    export const submit = () => form?.submit();
+    export const submit = () => {
+        form?.submit();
+        submitting = true;
+    };
     export const close = () => modal?.close();
 </script>
 
@@ -49,16 +47,19 @@
             {remoteForm}
             {...rest}
             {children}
-            onsubmit={() => modal?.close()}
+            postSubmit={() => {
+                modal?.close();
+                submitting = false;
+            }}
         />
         <div class="modal-action">
             <button
-                class="btn btn-primary"
-                onclick={form.submit}
-                disabled={delayedSubmit}
+                class="btn btn-primary {submitting ? 'loading disabled' : ''}"
+                onclick={submit}
+                disabled={submitting}
             >
-                {#if delayedSubmit}
-                    <span class="loading loading-spinner"></span>
+                {#if submitting}
+                    <span class="loading-spinner"></span>
                 {:else}
                     {actionText ?? 'Submit'}
                 {/if}

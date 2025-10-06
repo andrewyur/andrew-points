@@ -1,5 +1,6 @@
 <script lang="ts">
     const {
+        type = 'mdi',
         path = '',
         size,
         width,
@@ -9,7 +10,7 @@
         rotate = 0,
     }: {
         path?: string;
-        type?: 'mdi' | 'simple-icons' | string;
+        type?: 'mdi' | 'simple-icons';
         size?: string | number;
         width?: string | number;
         height?: string | number;
@@ -18,7 +19,13 @@
         rotate?: string | number;
     } = $props();
 
-    const defaults = $derived({ size: '24px', viewbox: '0 0 24 24' });
+    const types = {
+        mdi: { size: '24px', viewbox: '0 0 24 24' },
+        'simple-icons': { size: '24px', viewbox: '0 0 24 24' },
+        default: { size: '1em', viewbox: '0 0 100 100' },
+    };
+
+    const defaults = $derived(types[type]);
 
     const svgWidth = $derived(width ?? size ?? defaults.size);
     const svgHeight = $derived(height ?? size ?? defaults.size);

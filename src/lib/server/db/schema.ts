@@ -47,9 +47,9 @@ export const bountySubmission = sqliteTable('bounty_submission', {
 	id: text('id').primaryKey().$defaultFn(createId),
 	submitterId: text('creator').notNull().references(() => user.id),
 	submittedAt: integer('submitted_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
-	bountyId: text('bounty_id').notNull().references(() => bounty.id),
+	bountyId: text('bounty_id').notNull().references(() => bounty.id, { onDelete: 'cascade' }),
 	state: text('state').notNull().default('pending'), // pending | rejected | accepted
-	mediaHash: text('media_hash').notNull().references(() => media.hash)
+	mediaHash: text('media_hash').notNull().references(() => media.hash, { onDelete: "cascade" })
 })
 export const bountySubmissionRelations = relations(bountySubmission, ({ one }) => ({
 	creator: one(user, {
@@ -70,8 +70,8 @@ export const ledgerEntry = sqliteTable('ledger_entry', {
 	id: text('id').primaryKey().$defaultFn(createId),
 	userId: text('user').notNull().references(() => user.id),
 	amount: integer('amount').notNull(),
-	bountyId: text('bounty_id').references(() => bounty.id),
-	offerId: text('offer_id').references(() => offer.id),
+	bountyId: text('bounty_id').references(() => bounty.id, { onDelete: "set null" }),
+	offerId: text('offer_id').references(() => offer.id, { onDelete: "set null" }),
 	type: text('type').notNull(),
 	message: text('message'),
 	createdAt: integer('submitted_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),

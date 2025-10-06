@@ -6,6 +6,7 @@
     import type { HTMLFormAttributes } from 'svelte/elements';
     import { errorState } from './status';
     import type { RemoteForm } from '@sveltejs/kit';
+    import { refreshAll } from '$app/navigation';
 
     $effect(() => {
         if (submitting) {
@@ -54,7 +55,7 @@
             );
         }
         submitting = false;
-        form.reset();
+        refreshAll();
         postSubmit?.();
     })}
     autocomplete="off"

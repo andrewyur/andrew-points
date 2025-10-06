@@ -3,10 +3,12 @@ import { db } from "$lib/server/db";
 import { eq } from "drizzle-orm";
 import * as table from "$lib/server/db/schema"
 import * as v from "valibot"
-import { createBounty, createBountySubmission, deleteBountySubmission, getBountyById, getBountySubmissions, getSubmissionById } from "./bounties";
-import { extractUser } from "$lib/server/user";
+import { createBounty, createBountySubmission, deleteBounty, deleteBountySubmission, getBountyById, getBountySubmissions, getSubmissionById } from "./bounties";
+import { extractUser, getAdmins } from "$lib/server/user";
 import { getUserPoints } from "$lib/server/points";
 import { discordAnnouncement } from "$lib/server/discord";
+import { queryUserPoints } from "$lib/client/commands.remote";
+import { createNotification } from "$lib/server/notifications";
 
 export const fileHashExists = query(v.string(), async (hash: string) => {
     const existing = await db.query.media.findFirst({
@@ -41,11 +43,12 @@ export const deleteSubmissionForm = form(v.object({
 
 
 export const createBountyForm = form(v.object({
-    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(80)),
+    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(40)),
     fulfillmentCriteria: v.pipe(v.string(), v.nonEmpty()),
-    reward: v.pipe(v.string(), v.transform(Number), v.integer()),
-    deadline: v.pipe(v.string(), v.isoDate(), v.transform(s => new Date(s)))
+    reward: v.pipe(v.string(), v.nonEmpty(), v.transform(Number), v.integer()),
+    deadline: v.pipe(v.string(), v.nonEmpty(), v.isoDate(), v.transform(s => new Date(s)))
 }), async ({ title, fulfillmentCriteria, deadline, reward }) => {
+
     try {
         const user = extractUser()
         const userPoints = await getUserPoints(user.id);
@@ -53,6 +56,7 @@ export const createBountyForm = form(v.object({
         if (userPoints < reward) throw Error("User does not have enough points to create the bounty")
 
         const bounty = await createBounty(user.id, title, fulfillmentCriteria, deadline, reward)
+        queryUserPoints(user.id).refresh()
         await discordAnnouncement({
             type: "bounty_placed",
             bountyId: bounty.id
@@ -76,14 +80,33 @@ export const createSubmissionForm = form(v.object({
 
         const bountySubmissions = await getBountySubmissions(bountyId)
 
-        if (bountySubmissions.some(s => s.submitterId === user.id)) throw Error("User has already created a submission for this bounty");
+        // if (bountySubmissions.some(s => s.submitterId === user.id)) throw Error("User has already created a submission for this bounty");
 
         const submission = await createBountySubmission(user.id, bountyId, media)
         discordAnnouncement({
             type: "bounty_submission_created",
             submissionId: submission.id
+        });
+        (await getAdmins()).forEach((a) => {
+            createNotification(a.id, { type: "new_submission", bountyId: bounty.id })
         })
     } catch (e) {
         return { error: `Could not create Bounty submission: ${(e as Error).message}` }
+    }
+})
+
+export const deleteBountyForm = form(v.object({
+    bountyId: v.pipe(v.string(), v.uuid())
+}), async ({ bountyId }) => {
+    try {
+        const user = extractUser();
+
+        if (!user.admin) {
+            throw Error("User is not an admin")
+        }
+
+        await deleteBounty(bountyId)
+    } catch (e) {
+        return { error: `Could not delete Bounty: ${(e as Error).message}` }
     }
 })

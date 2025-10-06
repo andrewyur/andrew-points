@@ -9,12 +9,7 @@ export async function getBounties(userId: string) {
         where: not(table.bounty.completed),
         with: {
             creator: true,
-            submissions: {
-                with: {
-                    creator: true,
-                    media: true
-                },
-            }
+            submissions: true
         }
     });
 
@@ -36,13 +31,12 @@ export async function getBountyById(bountyId: string) {
         where: eq(table.bounty.id, bountyId),
         with: {
             creator: true,
-            fulfiller: {
+            submissions: {
                 with: {
-                    creator: true,
-                    media: true
+                    media: true,
+                    creator: true
                 }
-            },
-            submissions: true
+            }
         }
     })
 }
@@ -102,4 +96,8 @@ export async function deleteBountySubmission(submissionId: string) {
             .returning()
         await deleteMedia(submission.mediaHash, tx)
     })
+}
+
+export async function deleteBounty(bountyId: string) {
+    await db.delete(table.bounty).where(eq(table.bounty.id, bountyId))
 }

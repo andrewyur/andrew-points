@@ -21,7 +21,7 @@
         $props();
 </script>
 
-<div class="navbar bg-base-200 shadow-sm sticky top-0">
+<div class="navbar bg-base-200 shadow-sm sticky top-0 z-20">
     <div class="navbar-start">
         <div class="dropdown">
             <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
@@ -83,7 +83,7 @@
                 class="list dropdown-content bg-base-100 rounded-box z-1 p-2 shadow w-max max-h-100 overflow-y-scroll flex-nowrap overflow-visible"
             >
                 {#if data.notifications}
-                    {#each data.notifications as notification}
+                    {#each data.notifications as notification (notification.id)}
                         <NotificationItem {notification} />
                     {/each}
                 {:else}
@@ -94,7 +94,7 @@
     </div>
 </div>
 
-<div class="min-h-screen w-full">
+<div class="w-full flex flex-col items-center mb-10">
     {@render children()}
 </div>
 

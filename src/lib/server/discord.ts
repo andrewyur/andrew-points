@@ -13,28 +13,9 @@ const client = new Client({
 
 client.once('clientReady', async () => {
     console.log("Discord Bot Client ready")
-
-    const guild = await client.guilds.fetch(GUILD_ID);
-    const channel = await client.channels.fetch(POINTS_CHANNEL_ID)
-    if (!channel || !(channel instanceof TextChannel)) {
-        console.error("Could not find text channel with ID:");
-        return;
-    }
-
-    // channel.send("https://google.com")
-
-    // await channel.send("<@677282151959625730>");
-
-    const user = await client.users.fetch("677282151959625730")
-
-    const member = await guild.members.fetch("677282151959625730")
-
-    // console.log(member.displayName)
-
-    // user.send("Test notification!!")
 })
 
-client.login(DISCORD_BOT_TOKEN)
+// client.login(DISCORD_BOT_TOKEN)
 
 export async function fetchDisplayName(discordId: string) {
     if (!client.isReady()) {
@@ -74,7 +55,7 @@ type Announcement = {
 
 export async function discordAnnouncement(announcement: Announcement) {
     if (!client.isReady()) {
-        throw Error("Discord client is not ready. Please try again later.")
+        return
     }
 
     const channel = await client.channels.fetch(POINTS_CHANNEL_ID)
@@ -167,7 +148,7 @@ export async function discordAnnouncement(announcement: Announcement) {
 
 export async function discordPrivateMessage(userId: string, message: NotificationContext) {
     if (!client.isReady()) {
-        throw Error("Discord client is not ready. Please try again later.")
+        return
     }
 
     const userRecord = await getUserFromId(userId)
@@ -212,5 +193,7 @@ export async function discordPrivateMessage(userId: string, message: Notificatio
         case "offer_completed":
             user.send(`𝓞𝓷𝓮 𝓸𝓯 𝔂𝓸𝓾𝓻 𝓸𝓯𝓯𝓮𝓻𝓼 𝔀𝓪𝓼 𝓳𝓾𝓼𝓽 𝓬𝓸𝓶𝓹𝓵𝓮𝓽𝓮𝓭!  𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/marketplace/${message.offerId}`)
             break;
+        case "new_submission":
+            user.send(`There is a new bounty submission for you to judge! See more: ${APP_URL}/user`)
     }
 }

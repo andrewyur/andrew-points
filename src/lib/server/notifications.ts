@@ -6,7 +6,7 @@ export type NotificationContext = {
     type: "private_offer_posted" | "offer_purchased" | "offer_confirmation" | "offer_dispute" | "offer_completed"
     offerId: string
 } | {
-    type: "bounty_completed" | "bounty_expired" | "bounty_submission_accepted" | "bounty_submission_rejected"
+    type: "bounty_completed" | "bounty_expired" | "bounty_submission_accepted" | "bounty_submission_rejected" | "new_submission"
     bountyId: string
 } | {
     type: "admin_points_adjustment" | "item_redeemed"

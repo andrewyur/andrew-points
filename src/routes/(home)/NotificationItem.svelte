@@ -1,5 +1,6 @@
 <script lang="ts">
     import ErrorHandlingForm from '$lib/client/ErrorHandlingForm.svelte';
+    import { formatTime } from '$lib/client/time';
     import type { NotificationContext } from '$lib/server/notifications';
     import { dismissNotificationForm } from './notification.remote';
     import type { getNotifications } from './notifications';
@@ -21,55 +22,31 @@
         offer_dispute: 'Offer Dispute',
         offer_purchased: 'Offer Purchased',
         private_offer_posted: 'Private Offer Posted',
+        new_submission: 'New Bounty Submission',
     };
 
-    // svelte-ignore non_reactive_update
-    let link: string;
-    switch (notification.type as NotificationContext['type']) {
-        case 'item_redeemed':
-        case 'admin_points_adjustment':
-            link = `/statistics?transactionId=${notification.ledgerId}`;
-            break;
-        case 'bounty_completed':
-        case 'bounty_expired':
-        case 'bounty_submission_accepted':
-        case 'bounty_submission_rejected':
-            link = `/bounties/${notification.bountyId}`;
-            break;
-        case 'offer_completed':
-        case 'offer_purchased':
-        case 'private_offer_posted':
-            link = `/offers/${notification.offerId}`;
-            break;
-        case 'offer_confirmation':
-        case 'offer_dispute':
-            link = '/user';
-            break;
-    }
-
-    const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-    const divisions: { limit: number; unit: Intl.RelativeTimeFormatUnit }[] = [
-        { limit: 60, unit: 'second' },
-        { limit: 60, unit: 'minute' },
-        { limit: 24, unit: 'hour' },
-        { limit: 7, unit: 'day' },
-    ];
-
-    const diffMs = notification.createdAt.getTime() - new Date().getTime();
-    const diffSec = Math.round(diffMs / 1000);
-
-    // svelte-ignore non_reactive_update
-    let relTime: string;
-
-    let value = diffSec;
-    for (let i = 0; i < divisions.length; i++) {
-        const division = divisions[i];
-        relTime = rtf.format(Math.round(value), division.unit);
-        if (Math.abs(value) < division.limit) {
-            break;
+    const link = $derived.by(() => {
+        switch (notification.type as NotificationContext['type']) {
+            case 'item_redeemed':
+            case 'admin_points_adjustment':
+                return `/statistics?transactionId=${notification.ledgerId}`;
+            case 'bounty_completed':
+            case 'bounty_expired':
+            case 'bounty_submission_accepted':
+            case 'bounty_submission_rejected':
+                return `/bounties/${notification.bountyId}`;
+            case 'offer_completed':
+            case 'offer_purchased':
+            case 'private_offer_posted':
+                return `/offers/${notification.offerId}`;
+            case 'offer_confirmation':
+            case 'offer_dispute':
+            case 'new_submission':
+                return '/user';
         }
-        value /= division.limit;
-    }
+
+        return 'unknown';
+    });
 
     let notificationElement: HTMLLIElement;
 </script>
@@ -96,5 +73,7 @@
             </ErrorHandlingForm>
         </div>
     </div>
-    <span class="text-xs text-gray-500">{relTime}</span>
+    <span class="text-xs text-gray-500"
+        >{formatTime(notification.createdAt)}</span
+    >
 </li>
