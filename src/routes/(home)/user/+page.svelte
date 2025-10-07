@@ -15,6 +15,8 @@
 	import { queryUsers } from '$lib/client/commands.remote';
 	import { renderMedia } from '$lib/client/RenderMedia.svelte';
 	import ErrorHandlingForm from '$lib/client/ErrorHandlingForm.svelte';
+	import LedgerEntry from '$lib/client/LedgerEntry.svelte';
+	import UserChip from '$lib/client/UserChip.svelte';
 
 	const { data }: { data: PageServerData & LayoutServerData } = $props();
 
@@ -151,10 +153,20 @@
 							</h2>
 							<p>
 								If you have recieved the goods/services listed
-								in the offer "{task.title}" from seller "{task
-									.poster.username}", click confirm to release
-								their payment. The offer will be automatically
-								confirmed {formatDeadline(task.completeBy!)}
+								in the offer <a
+									class="link font-semibold"
+									href="/marketplace/{task.id}"
+									>{task.title}</a
+								>
+								from seller
+								<a
+									class="link font-semibold"
+									href="/user/{task.posterId}"
+									>{task.poster.displayName}</a
+								>, click confirm to release their payment. The
+								offer will be automatically confirmed {formatDeadline(
+									task.completeBy!,
+								)}
 							</p>
 							<div
 								class="card-actions flex flex-row justify-between"
@@ -284,4 +296,12 @@
 	{/if}
 </div>
 
-<div class="flex flex-col gap-5 items-center w-full"></div>
+<div class="divider m-10 lg:m-20"></div>
+
+<h1 class="text-3xl font-bold mb-7 lg:mb-17">Recent Activity</h1>
+
+<ul class="timeline timeline-vertical max-w-[90%]">
+	{#each data.activity as ledgerEntry}
+		<LedgerEntry {ledgerEntry} />
+	{/each}
+</ul>

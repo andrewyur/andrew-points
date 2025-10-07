@@ -14,20 +14,23 @@
 </script>
 
 <a
-    class="flex flex-row h-min w-max rounded-full bg-base-300 p-1 shadow-sm items-center gap-2"
+    class="flex flex-row h-min w-max rounded-full bg-base-300 shadow-sm items-center gap-2"
     href="/user/{user.id}"
 >
-    <div class="avatar">
+    <div class="avatar p-1">
         <div
             class="rounded-full {size === 'small'
                 ? 'max-h-5 max-w-5'
-                : 'max-h-12 max-w-12'}"
+                : 'max-h-12 max-w-12'}
+                "
         >
             <img src={user.picture} alt="avatar" />
         </div>
     </div>
     <div class="mr-3 {collapse ? 'hidden lg:block' : ''}">
-        <p class="  font-bold">{user.displayName}</p>
+        <p class="{size === 'small' ? '' : 'font-bold '} text-nowrap">
+            {user.displayName}
+        </p>
         {#if size !== 'small'}
             <svelte:boundary>
                 <p class="text-sm">

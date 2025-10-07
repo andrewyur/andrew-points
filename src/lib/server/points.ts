@@ -58,6 +58,11 @@ export type ExpandedLedgerEntry = Awaited<ReturnType<typeof db.query.ledgerEntry
         bounty: {
             with: {
                 creator: true
+                fulfiller: {
+                    with: {
+                        creator: true
+                    }
+                }
             }
         },
         offer: {
@@ -78,7 +83,12 @@ export async function getUserLedger(userId: string): Promise<ExpandedLedgerEntry
             user: true,
             bounty: {
                 with: {
-                    creator: true
+                    creator: true,
+                    fulfiller: {
+                        with: {
+                            creator: true
+                        }
+                    }
                 }
             },
             offer: {

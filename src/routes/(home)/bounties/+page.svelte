@@ -12,7 +12,7 @@
     import type { PageServerData } from './$types';
     import { createBountyForm, deleteBountyForm } from './bounties.remote';
     import UserChip from '$lib/client/UserChip.svelte';
-    import { formatTime } from '$lib/client/time';
+    import { formatTimeRelative } from '$lib/client/time';
 
     let { data }: { data: PageServerData & LayoutServerData } = $props();
 
@@ -72,7 +72,7 @@
                                 bounty.deadline,
                             )}"
                         >
-                            Due {formatTime(bounty.deadline)}
+                            Due {formatTimeRelative(bounty.deadline)}
                         </p>
                     </div>
                     {#if data.user.admin}

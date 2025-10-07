@@ -16,6 +16,8 @@
     import type { LayoutServerData } from './$types';
     import type { Snippet } from 'svelte';
     import NotificationItem from './NotificationItem.svelte';
+    import ErrorHandlingForm from '$lib/client/ErrorHandlingForm.svelte';
+    import { clearAllNotificationsForm } from './notification.remote';
 
     let { children, data }: { data: LayoutServerData; children: Snippet } =
         $props();
@@ -65,24 +67,29 @@
         <a class="btn btn-ghost text-xl" href="/user">Lodge Points</a>
     </div>
     <div class="navbar-end">
-        <div class="dropdown dropdown-end">
-            <button tabindex="0" class="btn btn-ghost btn-circle">
+        <details class="dropdown dropdown-end">
+            <summary class="btn btn-ghost btn-circle">
                 <div class="indicator">
                     <SvgIcon path={mdiBellOutline} />
-                    {#if data.notifications}
+                    {#if data.notifications.length > 0}
                         <span
                             class="badge badge-xs badge-primary indicator-item"
                             >{data.notifications.length}</span
                         >
                     {/if}
                 </div>
-            </button>
+            </summary>
             <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
             <ul
                 tabindex="0"
                 class="list dropdown-content bg-base-100 rounded-box z-1 p-2 shadow w-max max-h-100 overflow-y-scroll flex-nowrap overflow-visible"
             >
                 {#if data.notifications}
+                    <!-- <ErrorHandlingForm remoteForm={clearAllNotificationsForm}>
+                        <button class="text-gray-500 w-full" type="submit"
+                            >Clear All</button
+                        >
+                    </ErrorHandlingForm> -->
                     {#each data.notifications as notification (notification.id)}
                         <NotificationItem {notification} />
                     {/each}
@@ -90,7 +97,7 @@
                     <li>No notifications</li>
                 {/if}
             </ul>
-        </div>
+        </details>
     </div>
 </div>
 

@@ -11,3 +11,7 @@ export async function getNotifications(userId: string) {
 export async function removeNotification(id: string) {
     await db.delete(table.notification).where(eq(table.notification.id, id))
 }
+
+export async function clearAllNotifications(userId: string) {
+    await db.delete(table.notification).where(eq(table.notification.userId, userId))
+}

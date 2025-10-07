@@ -80,7 +80,7 @@ export const createSubmissionForm = form(v.object({
 
         const bountySubmissions = await getBountySubmissions(bountyId)
 
-        // if (bountySubmissions.some(s => s.submitterId === user.id)) throw Error("User has already created a submission for this bounty");
+        if (bountySubmissions.some(s => s.submitterId === user.id)) throw Error("User has already created a submission for this bounty");
 
         const submission = await createBountySubmission(user.id, bountyId, media)
         discordAnnouncement({

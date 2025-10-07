@@ -13,7 +13,7 @@
     import UserChip from '$lib/client/UserChip.svelte';
     import { mdiPlusBox } from '@mdi/js';
     import GeneralFormDialog from '$lib/client/GeneralFormDialog.svelte';
-    import { formatTime } from '$lib/client/time';
+    import { formatTimeRelative } from '$lib/client/time';
 
     const { data }: { data: PageServerData } = $props();
 
@@ -100,7 +100,7 @@
                     {Intl.DateTimeFormat('en-us', {
                         dateStyle: 'short',
                         timeStyle: 'short',
-                    }).format(data.bounty.deadline)} ({formatTime(
+                    }).format(data.bounty.deadline)} ({formatTimeRelative(
                         data.bounty.deadline,
                     )})
                 </td>
@@ -146,6 +146,11 @@
                                           : ''} absolute top-3 left-3"
                                     >{submission.state}</span
                                 >
+                                <div
+                                    class="card-body items-center justify-around"
+                                >
+                                    <UserChip user={submission.creator} />
+                                </div>
                             </div>
                         {/each}
                     {:else}

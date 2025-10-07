@@ -6,7 +6,7 @@ const divisions: { limit: number; unit: Intl.RelativeTimeFormatUnit }[] = [
     { limit: 7, unit: 'day' },
 ];
 
-export function formatTime(time: Date) {
+export function formatTimeRelative(time: Date) {
     const diffMs = time.getTime() - new Date().getTime();
     const diffSec = Math.round(diffMs / 1000);
 
@@ -22,4 +22,11 @@ export function formatTime(time: Date) {
         value /= division.limit;
     }
     return relTime
+}
+
+export function formatTimeAbsolute(date: Date) {
+    return Intl.DateTimeFormat('en-us', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+    }).format(date)
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
     import ErrorHandlingForm from '$lib/client/ErrorHandlingForm.svelte';
-    import { formatTime } from '$lib/client/time';
+    import { formatTimeRelative } from '$lib/client/time';
     import type { NotificationContext } from '$lib/server/notifications';
     import { dismissNotificationForm } from './notification.remote';
     import type { getNotifications } from './notifications';
@@ -74,6 +74,6 @@
         </div>
     </div>
     <span class="text-xs text-gray-500"
-        >{formatTime(notification.createdAt)}</span
+        >{formatTimeRelative(notification.createdAt)}</span
     >
 </li>
