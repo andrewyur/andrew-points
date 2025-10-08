@@ -4,33 +4,46 @@
 
     const {
         user,
-        size = 'medium',
-        collapse = true,
+        size = 'large',
+        collapse = false,
     }: {
         user: User;
-        size?: 'small' | 'medium' | 'large';
+        size?: 'small' | 'large';
         collapse?: boolean;
     } = $props();
 </script>
 
 <a
-    class="flex flex-row h-min w-max rounded-full bg-base-300 shadow-sm items-center gap-2"
+    class={[
+        'flex flex-row h-min w-max rounded-full bg-base-300 p-1 shadow-sm items-center',
+        {
+            'gap-1': size === 'small',
+            'gap-2': size !== 'small',
+        },
+    ]}
     href="/user/{user.id}"
 >
-    <div class="avatar p-1">
+    <div class="avatar">
         <div
-            class="rounded-full {size === 'small'
-                ? 'max-h-5 max-w-5'
-                : 'max-h-12 max-w-12'}
-                "
+            class={[
+                'rounded-full',
+                {
+                    'max-h-5 max-w-5': size === 'small',
+                    'max-h-12 max-w-12': size !== 'small',
+                },
+            ]}
         >
             <img src={user.picture} alt="avatar" />
         </div>
     </div>
-    <div class="mr-3 {collapse ? 'hidden lg:block' : ''}">
-        <p class="{size === 'small' ? '' : 'font-bold '} text-nowrap">
-            {user.displayName}
-        </p>
+    <div
+        class={{
+            'hidden lg:block': collapse,
+            'mr-1': size === 'small',
+            'mr-2': size !== 'small',
+        }}
+    >
+        <p class="font-semibold">{user.displayName}</p>
         {#if size !== 'small'}
             <svelte:boundary>
                 <p class="text-sm">

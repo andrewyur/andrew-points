@@ -1,7 +1,7 @@
 import { db } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
 import type { ExpandedLedgerEntry } from "$lib/server/points";
-import { desc, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 
 export async function getAllUserPoints() {
     return await db.select({
@@ -13,15 +13,25 @@ export async function getAllUserPoints() {
         .orderBy(desc(sql`points`))
 }
 
-export async function getRecentActivity(): Promise<ExpandedLedgerEntry[]> {
+export async function getRecentActivityPageAmount() {
+    return Math.ceil((await db.query.ledgerEntry.findMany()).length / 10)
+}
+
+export async function getRecentActivity(page: number): Promise<ExpandedLedgerEntry[]> {
     return await db.query.ledgerEntry.findMany({
         limit: 10,
+        offset: page * 10,
         orderBy: desc(table.ledgerEntry.createdAt),
         with: {
             user: true,
             bounty: {
                 with: {
-                    creator: true
+                    creator: true,
+                    fulfiller: {
+                        with: {
+                            creator: true
+                        }
+                    }
                 }
             },
             offer: {
@@ -33,3 +43,14 @@ export async function getRecentActivity(): Promise<ExpandedLedgerEntry[]> {
         }
     })
 }
+
+export async function getPageOfLegderEntry(ledgerEntryId: string) {
+    const numbered = db.$with('numbered').as(db.select({
+        id: table.ledgerEntry.id,
+        position: sql<number>`ROW_NUMBER() OVER (ORDER BY ${table.ledgerEntry.createdAt} DESC)`.as('position')
+    }).from(table.ledgerEntry))
+
+    const [{ position }] = await db.with(numbered).select().from(numbered).where(eq(numbered.id, ledgerEntryId))
+
+    return Math.ceil(position / 10) - 1
+} 

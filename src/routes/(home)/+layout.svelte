@@ -14,13 +14,29 @@
         mdiWalletGiftcard,
     } from '@mdi/js';
     import type { LayoutServerData } from './$types';
-    import type { Snippet } from 'svelte';
+    import { onMount, type Snippet } from 'svelte';
     import NotificationItem from './NotificationItem.svelte';
     import ErrorHandlingForm from '$lib/client/ErrorHandlingForm.svelte';
     import { clearAllNotificationsForm } from './notification.remote';
 
     let { children, data }: { data: LayoutServerData; children: Snippet } =
         $props();
+
+    onMount(() => {
+        if (window.location.hash) {
+            const el = document.getElementById(
+                window.location.hash.substring(1),
+            );
+            if (el) {
+                el.classList.add(
+                    'bg-yellow-300',
+                    'transition-[background-color]',
+                    'transition-duration-300',
+                );
+                setTimeout(() => el.classList.remove('bg-yellow-300'), 2000);
+            }
+        }
+    });
 </script>
 
 <div class="navbar bg-base-200 shadow-sm sticky top-0 z-20">
@@ -81,10 +97,9 @@
             </summary>
             <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
             <ul
-                tabindex="0"
-                class="list dropdown-content bg-base-100 rounded-box z-1 p-2 shadow w-max max-h-100 overflow-y-scroll flex-nowrap overflow-visible"
+                class="list dropdown-content bg-base-100 rounded-box z-1 p-2 shadow w-max max-h-100 flex-nowrap overflow-y-scroll"
             >
-                {#if data.notifications}
+                {#if data.notifications.length > 0}
                     <!-- <ErrorHandlingForm remoteForm={clearAllNotificationsForm}>
                         <button class="text-gray-500 w-full" type="submit"
                             >Clear All</button
@@ -94,7 +109,7 @@
                         <NotificationItem {notification} />
                     {/each}
                 {:else}
-                    <li>No notifications</li>
+                    <li class="px-10 py-4 text-gray-500">No notifications</li>
                 {/if}
             </ul>
         </details>

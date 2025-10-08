@@ -101,7 +101,7 @@
                         {bounty.reward} Points
                     </h3>
                     <SvgIcon path={mdiArrowLeft} />
-                    <UserChip user={bounty.creator} />
+                    <UserChip collapse={true} user={bounty.creator} />
                 </div>
                 <p>
                     <span class="text-gray-500 italic"

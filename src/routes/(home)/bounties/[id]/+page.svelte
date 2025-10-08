@@ -72,7 +72,7 @@
                     >Posted By:
                 </td>
                 <td>
-                    <UserChip collapse={false} user={data.bounty.creator} />
+                    <UserChip user={data.bounty.creator} />
                 </td>
             </tr>
             <tr>

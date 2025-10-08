@@ -72,3 +72,4 @@ mini economy for lodge
   - notifications point to offer/bounty pages, where tasks will reside
 - [ ] logger with file transport
 - [ ] extract discord client to separate process, or convert cron processes to endpoint
+- [ ] announcements

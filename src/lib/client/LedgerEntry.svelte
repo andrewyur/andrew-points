@@ -1,41 +1,22 @@
 <script lang="ts">
     import type { ExpandedLedgerEntry } from '$lib/server/points';
-    import { mdiCircle } from '@mdi/js';
-    import SvgIcon from './SvgIcon.svelte';
     import { formatTimeAbsolute } from './time';
     import UserChip from './UserChip.svelte';
 
     const {
         ledgerEntry,
+        showUser = false,
     }: {
         ledgerEntry: ExpandedLedgerEntry;
+        showUser?: boolean;
     } = $props();
 </script>
-
-<!-- <li>
-    <div class="timeline-start">1984</div>
-    <div class="timeline-middle">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        class="h-5 w-5"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-          clip-rule="evenodd"
-        />
-      </svg>
-    </div>
-    <div class="timeline-end timeline-box">First Macintosh computer</div>
-    <hr />
-  </li> -->
 
 <li
     style="grid-template-columns: 0, auto var( --timeline-col-end, minmax(0, 1fr) );
     };"
-    class="flex flex-row justify-start"
+    class="flex flex-row justify-start target:bg-yellow-300"
+    id={ledgerEntry.id}
 >
     <hr />
     <div class="timeline-start pr-2 not-lg:hidden w-35">
@@ -59,23 +40,18 @@
                     <span class="badge badge-success badge-sm">Completed</span>
                 {/if}
 
-                <p class="flex flex-row items-center gap-2">
+                <div class="flex flex-row items-center gap-2">
                     <span class="text-gray-500 italic">poster:</span>
-                    <UserChip
-                        size="small"
-                        collapse={false}
-                        user={ledgerEntry.bounty.creator}
-                    />
-                </p>
+                    <UserChip size="small" user={ledgerEntry.bounty.creator} />
+                </div>
                 {#if ledgerEntry.bounty.fulfiller}
-                    <p class="flex flex-row items-center gap-2">
+                    <div class="flex flex-row items-center gap-2">
                         <span class="text-gray-500 italic">fulfiller:</span>
                         <UserChip
                             size="small"
-                            collapse={false}
                             user={ledgerEntry.bounty.creator}
                         />
-                    </p>
+                    </div>
                 {/if}
             {:else}
                 Bounty not found...
@@ -87,23 +63,15 @@
                     href="/bounty/{ledgerEntry.offer.id}"
                     >Offer: {ledgerEntry.offer.title}</a
                 >
-                <p class="flex flex-row items-center gap-2">
+                <div class="flex flex-row items-center gap-2">
                     <span class="text-gray-500 italic">poster:</span>
-                    <UserChip
-                        size="small"
-                        collapse={false}
-                        user={ledgerEntry.offer.poster}
-                    />
-                </p>
+                    <UserChip size="small" user={ledgerEntry.offer.poster} />
+                </div>
                 {#if ledgerEntry.offer.buyer}
-                    <p class="flex flex-row items-center gap-2">
+                    <div class="flex flex-row items-center gap-2">
                         <span class="text-gray-500 italic">buyer:</span>
-                        <UserChip
-                            size="small"
-                            collapse={false}
-                            user={ledgerEntry.offer.buyer}
-                        />
-                    </p>
+                        <UserChip size="small" user={ledgerEntry.offer.buyer} />
+                    </div>
                 {/if}
             {:else}
                 Offer not found...
