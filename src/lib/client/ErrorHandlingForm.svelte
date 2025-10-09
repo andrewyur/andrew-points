@@ -6,7 +6,7 @@
     import type { HTMLFormAttributes } from 'svelte/elements';
     import { errorState } from './status';
     import type { RemoteForm } from '@sveltejs/kit';
-    import { refreshAll } from '$app/navigation';
+    import { invalidateAll } from '$app/navigation';
 
     $effect(() => {
         if (submitting) {
@@ -31,12 +31,14 @@
         postSubmit,
         remoteForm,
         submitting = $bindable(false),
+        invalidate = true,
         ...rest
     }: {
         children: Snippet;
         postSubmit?: () => void;
         submitting?: boolean;
         remoteForm: RemoteFormType;
+        invalidate?: boolean;
     } & Partial<HTMLFormAttributes> = $props();
 </script>
 
@@ -55,7 +57,9 @@
             );
         }
         submitting = false;
-        refreshAll();
+        if (invalidate) {
+            invalidateAll();
+        }
         postSubmit?.();
     })}
     autocomplete="off"

@@ -54,7 +54,7 @@
         />
         <div class="modal-action">
             <button
-                class="btn btn-primary {submitting ? 'loading disabled' : ''}"
+                class={['btn btn-primary', { 'loading disabled': submitting }]}
                 onclick={submit}
                 disabled={submitting}
             >

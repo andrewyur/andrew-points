@@ -173,7 +173,7 @@ export async function discordPrivateMessage(userId: string, message: Notificatio
             user.send(`𝓞𝓷𝓮 𝓸𝓯 𝔂𝓸𝓾𝓻 𝓫𝓸𝓾𝓷𝓽𝔂 𝓼𝓾𝓫𝓶𝓲𝓼𝓼𝓲𝓸𝓷𝓼 𝔀𝓪𝓼 𝓻𝓮𝓳𝓮𝓬𝓽𝓮𝓭! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/bounties/${message.bountyId}`)
             break;
         case "item_redeemed":
-            user.send(`𝓢𝓸𝓶𝓮𝓸𝓷𝓮 𝓳𝓾𝓼𝓽 𝓻𝓮𝓭𝓮𝓮𝓶𝓮𝓭 an item! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/statistics?transactionId=${message.ledgerId}#${message.ledgerId}`)
+            user.send(`𝓢𝓸𝓶𝓮𝓸𝓷𝓮 𝓳𝓾𝓼𝓽 𝓻𝓮𝓭𝓮𝓮𝓶𝓮𝓭 an item! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/statistics?transactionId=${message.ledgerId}`)
             break;
         case "offer_confirmation":
             user.send(`𝓨𝓸𝓾 𝓷𝓮𝓮𝓭 𝓽𝓸 𝓬𝓸𝓷𝓯𝓲𝓻𝓶 𝓽𝓱𝓪𝓽 𝔂𝓸𝓾 𝓱𝓪𝓿𝓮 𝓻𝓮𝓬𝓲𝓮𝓿𝓮𝓭 𝓲𝓽𝓮𝓶𝓼 𝓯𝓻𝓸𝓶 𝓪𝓷 𝓸𝓯𝓯𝓮𝓻! 𝖘𝖊𝖊 𝖒𝖔𝖗𝖊: ${APP_URL}/marketplace/${message.offerId}`)

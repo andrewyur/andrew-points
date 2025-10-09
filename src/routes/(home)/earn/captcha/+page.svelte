@@ -49,11 +49,15 @@
     });
 </script>
 
-<p>Remaining: {data.session.remaining}</p>
+<p class="text-2xl font-semibold py-7">Remaining: {data.session.remaining}</p>
 
 <h-captcha site-key="3e1e0c64-37d4-4a0a-83e2-7c9cc674d562" bind:this={captcha}
 ></h-captcha>
 
-<ErrorHandlingForm remoteForm={verifyCaptchaForm} bind:this={captchaForm}>
+<ErrorHandlingForm
+    remoteForm={verifyCaptchaForm}
+    bind:this={captchaForm}
+    invalidate={false}
+>
     <input hidden name="token" bind:this={tokenInput} />
 </ErrorHandlingForm>

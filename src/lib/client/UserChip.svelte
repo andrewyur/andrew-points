@@ -15,7 +15,7 @@
 
 <a
     class={[
-        'flex flex-row h-min w-max rounded-full bg-base-300 p-1 shadow-sm items-center',
+        'flex flex-row h-min w-max rounded-full p-1 items-center btn',
         {
             'gap-1': size === 'small',
             'gap-2': size !== 'small',
@@ -43,7 +43,17 @@
             'mr-2': size !== 'small',
         }}
     >
-        <p class="font-semibold">{user.displayName}</p>
+        <p
+            class={[
+                'font-semibold',
+                {
+                    'text-sm': size === 'small',
+                    'text-base': size !== 'small',
+                },
+            ]}
+        >
+            {user.displayName}
+        </p>
         {#if size !== 'small'}
             <svelte:boundary>
                 <p class="text-sm">

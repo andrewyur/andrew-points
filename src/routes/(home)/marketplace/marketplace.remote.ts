@@ -51,7 +51,7 @@ export const buyOfferForm = form(v.object({
 
 export const createOfferForm = form(v.object({
     cost: v.pipe(v.string(), v.transform(Number), v.integer()),
-    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(80)),
+    title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(40)),
     description: v.pipe(v.string(), v.nonEmpty()),
     visibleTo: v.union([v.pipe(v.string(), v.uuid()), v.pipe(v.literal(''), v.transform(() => null))])
 }), async ({ cost, title, description, visibleTo }) => {

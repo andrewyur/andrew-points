@@ -141,8 +141,8 @@ export const notification = sqliteTable("notification", {
 	userId: text('user_id').notNull().references(() => user.id),
 	type: text('type').notNull(),
 	createdAt: integer('created_at', { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
-	offerId: text("offer_id").references(() => offer.id),
-	bountyId: text("bounty_id").references(() => bounty.id),
+	offerId: text("offer_id").references(() => offer.id, { onDelete: "set null" }),
+	bountyId: text("bounty_id").references(() => bounty.id, { onDelete: "set null" }),
 	ledgerId: text('ledger_id').references(() => ledgerEntry.id),
 })
 

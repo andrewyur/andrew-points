@@ -29,7 +29,7 @@
         switch (notification.type as NotificationContext['type']) {
             case 'item_redeemed':
             case 'admin_points_adjustment':
-                return `/statistics?transactionId=${notification.ledgerId}#${notification.ledgerId}`;
+                return `/statistics?transactionId=${notification.ledgerId}`;
             case 'bounty_completed':
             case 'bounty_expired':
             case 'bounty_submission_accepted':
@@ -38,7 +38,7 @@
             case 'offer_completed':
             case 'offer_purchased':
             case 'private_offer_posted':
-                return `/offers/${notification.offerId}`;
+                return `/marketplace/${notification.offerId}`;
             case 'offer_confirmation':
             case 'offer_dispute':
             case 'new_submission':

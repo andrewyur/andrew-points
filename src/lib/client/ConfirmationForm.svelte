@@ -33,6 +33,8 @@
         });
     }
 
+    let submitting = $state(false);
+
     export const show = () => dialog.showModal();
     export const close = () => {
         dialog.close();
@@ -45,15 +47,30 @@
     {...rest}
     {remoteForm}
     children={formContents}
+    postSubmit={() => {
+        submitting = false;
+    }}
 />
 
-<dialog bind:this={dialog}>
-    {@render children()}
-    <button onclick={close}>Cancel</button>
-    <button
-        onclick={() => {
-            form.submit();
-            close();
-        }}>Confirm</button
-    >
+<dialog bind:this={dialog} class="modal">
+    <div class="modal-box w-sm">
+        {@render children()}
+        <div class="modal-action flex flex-row justify-between">
+            <button class="btn" onclick={close}>Cancel</button>
+            <button
+                class={['btn btn-primary', { 'loading disabled': submitting }]}
+                disabled={submitting}
+                onclick={() => {
+                    form.submit();
+                    close();
+                }}
+            >
+                {#if submitting}
+                    <span class="loading-spinner"></span>
+                {:else}
+                    Confirm
+                {/if}</button
+            >
+        </div>
+    </div>
 </dialog>

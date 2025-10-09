@@ -4,6 +4,8 @@
     import type { LayoutServerData } from '../$types';
     import type { PageServerData } from './$types';
     import { getRecentActivityPageQuery } from './statistics.remote';
+    import { page } from '$app/state';
+    import { onMount } from 'svelte';
 
     let { data }: { data: PageServerData & LayoutServerData } = $props();
 
@@ -19,6 +21,25 @@
 
         recentActivity = await getRecentActivityPageQuery(currentPage);
     }
+
+    onMount(() => {
+        const transactionId = page.url.searchParams.get('transactionId');
+        if (transactionId !== null) {
+            const el = document.getElementById(transactionId);
+            if (el) {
+                el.classList.add(
+                    'bg-yellow-300',
+                    'transition-[background-color]',
+                    'transition-duration-300',
+                );
+                setTimeout(() => el.classList.remove('bg-yellow-300'), 2000);
+                el.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
+            }
+        }
+    });
 </script>
 
 <h1 class="text-4xl font-bold py-7">Leaderboard</h1>
@@ -38,7 +59,7 @@
 
 <ul class="timeline timeline-vertical max-w-[90%]">
     {#each recentActivity as ledgerEntry}
-        <LedgerEntry {ledgerEntry} />
+        <LedgerEntry showUser={true} {ledgerEntry} />
     {/each}
 </ul>
 

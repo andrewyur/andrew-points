@@ -44,12 +44,17 @@
     }
 </script>
 
-<div class="flex flex-row justify-between max-w-[1000px] w-[80%] items-center">
-    <h1 class="font-bold text-4xl lg:text-6xl my-7">Bounties</h1>
-
-    <button class="btn btn-square" onclick={() => createModal.show()}
-        ><SvgIcon path={mdiPlus} /></button
-    >
+<div class=" max-w-[1000px] w-[80%] my-7">
+    <div class="flex flex-row justify-between items-center">
+        <h1 class="font-bold text-4xl lg:text-6xl">Bounties</h1>
+        <button class="btn btn-square" onclick={() => createModal.show()}
+            ><SvgIcon path={mdiPlus} /></button
+        >
+    </div>
+    <p class="text-base lg:text-lg max-w-lg pt-3">
+        Earn points by completing tasks posted by other users, or post your own
+        bounties to have others do your bidding
+    </p>
 </div>
 
 <div
