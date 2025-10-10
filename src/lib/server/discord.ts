@@ -15,7 +15,7 @@ client.once('clientReady', async () => {
     console.log("Discord Bot Client ready")
 })
 
-// client.login(DISCORD_BOT_TOKEN)
+client.login(DISCORD_BOT_TOKEN)
 
 export async function fetchDisplayName(discordId: string) {
     if (!client.isReady()) {

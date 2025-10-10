@@ -56,11 +56,11 @@
         </p>
         {#if size !== 'small'}
             <svelte:boundary>
-                <p class="text-sm">
+                <p class="text-sm font-normal italic">
                     {await queryUserPoints(user.id)} Points
                 </p>
                 {#snippet pending()}
-                    <p class="text-sm">loading...</p>
+                    <p class="text-sm font-normal italic">loading...</p>
                 {/snippet}
             </svelte:boundary>
         {/if}

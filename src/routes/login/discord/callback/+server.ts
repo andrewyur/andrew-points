@@ -10,7 +10,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
     const state = event.url.searchParams.get("state");
 
     if (storedState === null || code === null || state === null || storedState !== state) {
-        return new Response("Please restart the process.", {
+        return new Response("Please restart the process: Could not retrieve auth state", {
             status: 400
         })
     }
@@ -19,7 +19,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
     try {
         tokens = await discord.validateAuthorizationCode(code, null);
     } catch {
-        return new Response("Please restart the process.", {
+        return new Response("Please restart the process: Auth code invalid", {
             status: 400
         })
     }
@@ -40,7 +40,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
         });
         discordUser = await response.json();
     } catch {
-        return new Response("Please restart the process.", {
+        return new Response("Please restart the process: Could not fetch discord user information", {
             status: 400
         })
     }

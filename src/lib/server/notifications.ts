@@ -1,4 +1,4 @@
-import { db } from "./db"
+import { db, type DatabaseTransactionClient } from "./db"
 import * as table from "./db/schema"
 import { discordPrivateMessage } from "./discord"
 
@@ -13,8 +13,8 @@ export type NotificationContext = {
     ledgerId: string
 }
 
-export async function createNotification(userId: string, context: NotificationContext) {
-    await db.insert(table.notification).values({
+export async function createNotification(userId: string, context: NotificationContext, client?: DatabaseTransactionClient) {
+    await (client ?? db).insert(table.notification).values({
         userId: userId,
         type: context.type,
         offerId: "offerId" in context ? context.offerId : null,
