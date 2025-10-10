@@ -19,7 +19,6 @@
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
-		"@libsql/client": "^0.14.0",
 		"@mdi/js": "^7.4.47",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
@@ -43,13 +42,12 @@
 	"dependencies": {
 		"@hcaptcha/vanilla-hcaptcha": "^1.1.1",
 		"@node-rs/argon2": "^2.0.2",
-		"@rollup/plugin-commonjs": "^28.0.6",
+		"@libsql/client": "^0.14.0",
 		"@tailwindcss/vite": "^4.1.14",
 		"arctic": "^3.7.0",
 		"async-mutex": "^0.5.0",
 		"discord.js": "^14.22.1",
 		"hcaptcha": "^0.2.0",
-		"node-cron": "^4.2.1",
 		"sharp": "^0.34.3",
 		"tailwindcss": "^4.1.14",
 		"temporal-polyfill": "^0.3.0"
