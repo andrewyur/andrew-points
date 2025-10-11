@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports: 
+      - "3000:3000"
+    volumes:
+      - ./local.db:/db/local.db
+      - ./media:/media
+    
+
+  cron:
+    image: curlimages/curl:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: ["sh", "-c", "while true; do curl -s 'http://app:3000/cron?secret=${CRON_SECRET}'; sleep 300; done"]
+    depends_on:
+      - app
