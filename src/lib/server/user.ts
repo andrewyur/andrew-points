@@ -3,7 +3,9 @@ import { db } from "./db";
 import * as table from "./db/schema"
 import { getRequestEvent } from "$app/server";
 import { redirect } from "@sveltejs/kit";
-import { fetchDisplayName } from "./discord";
+import { discordAnnouncement, fetchDisplayName } from "./discord";
+import { createTransaction } from "./points";
+import { createNotification } from "./notifications";
 
 export async function getUserFromId(id: string) {
     return await db.query.user.findFirst({
@@ -32,6 +34,9 @@ export async function createUser(discordId: string, username: string, avatarHash
         picture,
         displayName
     }).returning();
+
+    await createTransaction(user.id, 20, { type: "admin", message: "Welcome!" })
+    await discordAnnouncement({ type: "user_joined", userId: user.id })
 
     return user;
 }

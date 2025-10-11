@@ -4,6 +4,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+# provide local database so db client can be created during build time
+ENV DATABASE_URL=file:local.db
 RUN npm run build
 
 # Stage 2: Run

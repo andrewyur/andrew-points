@@ -65,11 +65,12 @@ mini economy for lodge
   - task for offer sellers to confirm that they have given goods (?)
   - create final design for app bar layout
     - decide where notifications will be and how they will work
-- [ ] style pages
+- [x] style pages
   - prioritizing mobile view
   - daisyui.com
   - notifications will be displayed in app bar
   - notifications point to offer/bounty pages, where tasks will reside
 - [ ] logger with file transport
-- [ ] extract discord client to separate process, or convert cron processes to endpoint
-- [ ] announcements
+- [x] extract discord client to separate process, or convert cron processes to endpoint
+- [x] announcements
+- [ ] better dark mode
