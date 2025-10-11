@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import * as table from "$lib/server/db/schema"
 import type { RequestEvent } from "./$types";
 import path from "path";
-import { MEDIA_LOCATON } from "$env/static/private";
+import { MEDIA_LOCATION } from "$env/static/private";
 import fs from "fs/promises";
 import { createReadStream } from "fs";
 import { Readable } from "stream";
@@ -17,7 +17,7 @@ export async function GET(event: RequestEvent) {
         return new Response("Could not find any media for the hash", { status: 404 })
     }
 
-    const resolvedMediaDir = path.resolve(MEDIA_LOCATON)
+    const resolvedMediaDir = path.resolve(MEDIA_LOCATION)
     const resolvedMediaPath = path.resolve(media.path)
 
     if (!resolvedMediaPath.startsWith(resolvedMediaDir)) {
