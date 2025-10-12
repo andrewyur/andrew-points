@@ -31,3 +31,5 @@ vite.config.ts.timestamp-*
 *.jpg
 *.mov
 *.mp4
+
+package-lock.json
