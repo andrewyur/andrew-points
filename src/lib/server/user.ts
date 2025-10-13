@@ -6,7 +6,7 @@ import { redirect } from "@sveltejs/kit";
 import { discordAnnouncement, fetchDisplayName } from "./discord";
 import { createTransaction } from "./points";
 import { createNotification } from "./notifications";
-import { ALLOWLIST } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 
 export async function getUserFromId(id: string) {
     return await db.query.user.findFirst({
@@ -18,10 +18,8 @@ export async function getAllUsers() {
     return await db.query.user.findMany()
 }
 
-// const allowList: null | string[] = ["baetylboy"]
-const allowList: null | string[] = ALLOWLIST.split(',')
-
 export async function createUser(discordId: string, username: string, avatarHash: string | null) {
+    const allowList = env.ALLOWLIST.split(',');
 
     if (allowList && !allowList.includes(username)) throw Error("User is not in allowlist! please come back later")
 
