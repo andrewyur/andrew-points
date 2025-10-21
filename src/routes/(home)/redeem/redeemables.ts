@@ -47,6 +47,13 @@ export const redeemableItems: Redeemable[] = [
         name: "Full Body Oil Massage with Miles",
         description: "Miles will oil you down, and perform a full body deep tissue massage on you",
         redeemMessage: "Miles will be reaching out to you shortly",
-        cost: 500
+        cost: 400
+    },
+    {
+        id: "kiss_on_cheek",
+        name: "A kiss on the cheek",
+        description: "Miles or Andrew will give you a quick peck on the cheek",
+        redeemMessage: "Miles/Andrew will be reaching out to you shortly",
+        cost: 10
     }
 ]

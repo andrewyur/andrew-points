@@ -5,6 +5,7 @@ import { HCAPTCHA_SECRET } from '$env/static/private';
 import { advanceEarnSession, completeEarnSessionFromUser, createEarnSession, getEarnSessionFromUser } from './earnSession';
 import { extractUser } from '$lib/server/user';
 import { redirect } from '@sveltejs/kit';
+import { formatTimeRelative } from '$lib/time';
 
 export const verifyCaptchaForm = form(v.object({
     token: v.pipe(v.string(), v.nonEmpty())
@@ -34,6 +35,10 @@ export const startCaptchaSessionForm = form(v.object({}), async () => {
     try {
         const user = extractUser()
         const session = await getEarnSessionFromUser(user.id)
+
+        if (session?.completed) {
+            throw Error(`Cooldown finishes ${formatTimeRelative(session.expiresAt)}`)
+        }
 
         if (!session) {
             await createEarnSession(user.id)

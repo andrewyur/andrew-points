@@ -1,6 +1,6 @@
 <script lang="ts">
     import ErrorHandlingForm from '$lib/client/ErrorHandlingForm.svelte';
-    import { formatTimeRelative } from '$lib/client/time';
+    import { formatTimeRelative } from '$lib/time';
     import type { NotificationContext } from '$lib/server/notifications';
     import { dismissNotificationForm } from './notification.remote';
     import type { getNotifications } from './notifications';

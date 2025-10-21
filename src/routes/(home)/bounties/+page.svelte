@@ -12,7 +12,7 @@
     import type { PageServerData } from './$types';
     import { createBountyForm, deleteBountyForm } from './bounties.remote';
     import UserChip from '$lib/client/UserChip.svelte';
-    import { formatTimeRelative } from '$lib/client/time';
+    import { formatTimeRelative } from '$lib/time';
 
     let { data }: { data: PageServerData & LayoutServerData } = $props();
 

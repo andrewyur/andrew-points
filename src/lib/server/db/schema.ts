@@ -124,7 +124,8 @@ export const earnSession = sqliteTable('earn_session', {
 		const now = new Date();
 		now.setHours(now.getHours() + 3)
 		return now
-	})
+	}).notNull(),
+	completed: integer('completed', { mode: 'boolean' }).default(false).notNull()
 })
 
 export const media = sqliteTable('media', {

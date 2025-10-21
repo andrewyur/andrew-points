@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { ExpandedLedgerEntry } from '$lib/server/points';
     import { redeemableItems } from '../../routes/(home)/redeem/redeemables';
-    import { formatTimeAbsolute } from './time';
+    import { formatTimeAbsolute } from '../time';
     import UserChip from './UserChip.svelte';
 
     const {

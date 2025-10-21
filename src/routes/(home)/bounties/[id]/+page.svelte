@@ -13,7 +13,7 @@
     import UserChip from '$lib/client/UserChip.svelte';
     import { mdiPlusBox } from '@mdi/js';
     import GeneralFormDialog from '$lib/client/GeneralFormDialog.svelte';
-    import { formatTimeRelative } from '$lib/client/time';
+    import { formatTimeRelative } from '$lib/time';
 
     const { data }: { data: PageServerData } = $props();
 
