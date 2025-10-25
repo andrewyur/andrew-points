@@ -34,7 +34,7 @@ export async function createUser(discordId: string, username: string, avatarHash
         displayName
     }).returning();
 
-    await createTransaction(user.id, 20, { type: "admin", message: "Welcome!" })
+    await createTransaction(user.id, 10, { type: "admin", message: "Welcome!" })
     await discordAnnouncement({ type: "user_joined", userId: user.id })
 
     return user;
