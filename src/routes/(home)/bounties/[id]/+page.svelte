@@ -25,6 +25,13 @@
 
         if (file === undefined) return;
 
+        if ((file.size > 104, 857, 600)) {
+            fileInput?.setCustomValidity(
+                'File size too big: must be less than 100mb',
+            );
+            return;
+        }
+
         const hash = await computeFileHash(file);
 
         if (await fileHashExists(hash)) {

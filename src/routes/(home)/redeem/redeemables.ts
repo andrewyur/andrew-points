@@ -62,5 +62,12 @@ export const redeemableItems: Redeemable[] = [
         description: "Create a secret handshake with Miles or Andrew",
         redeemMessage: "Contact Miles or Andrew for your handshake",
         cost: 20
+    },
+    {
+        id: "change_color",
+        name: "Change the website background color",
+        description: "Change the background color of the website for a maximum of 1 week",
+        redeemMessage: "Let andrew know what color you want",
+        cost: 45
     }
 ]
