@@ -53,7 +53,14 @@ export const redeemableItems: Redeemable[] = [
         id: "kiss_on_cheek",
         name: "A kiss on the cheek",
         description: "Miles or Andrew will give you a quick peck on the cheek",
-        redeemMessage: "Miles/Andrew will be reaching out to you shortly",
-        cost: 10
+        redeemMessage: "Contact Miles or Andrew for your kiss",
+        cost: 15
+    },
+    {
+        id: "secret_handshake",
+        name: "Create a Secret Handshake",
+        description: "Create a secret handshake with Miles or Andrew",
+        redeemMessage: "Contact Miles or Andrew for your handshake",
+        cost: 20
     }
 ]

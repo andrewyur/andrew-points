@@ -122,7 +122,7 @@ export const earnSession = sqliteTable('earn_session', {
 	type: text('type').notNull(),
 	expiresAt: integer('expires_at', { mode: "timestamp_ms" }).$defaultFn(() => {
 		const now = new Date();
-		now.setHours(now.getHours() + 3)
+		now.setHours(now.getHours() + 6)
 		return now
 	}).notNull(),
 	completed: integer('completed', { mode: 'boolean' }).default(false).notNull()
