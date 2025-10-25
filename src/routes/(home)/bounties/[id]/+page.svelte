@@ -198,4 +198,5 @@
         onchange={validateMedia}
         bind:this={fileInput}
     />
+    <div class="validator-hint">{fileInput.validationMessage}</div>
 </GeneralFormDialog>
