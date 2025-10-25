@@ -19,7 +19,7 @@ export async function getAllUsers() {
 }
 
 export async function createUser(discordId: string, username: string, avatarHash: string | null) {
-    const allowList = env.ALLOWLIST.split(',');
+    const allowList: string[] | null = env.ALLOWLIST?.split(',');
 
     if (allowList && !allowList.includes(username)) throw Error("User is not in allowlist! please come back later")
 
