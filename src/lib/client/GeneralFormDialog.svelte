@@ -20,6 +20,8 @@
         actionText?: string;
     } & Partial<HTMLFormAttributes> = $props();
 
+    let formElement: HTMLFormElement | undefined = $state();
+
     let modal: HTMLDialogElement | null = $state(null);
     let form: ErrorHandlingForm<RemoteFormType> | null = $state(null);
     let submitting = $state(false);
@@ -44,6 +46,7 @@
             class="p-3 flex flex-col items-center gap-4"
             bind:submitting
             bind:this={form}
+            bind:formElement
             {remoteForm}
             {...rest}
             {children}
@@ -56,7 +59,7 @@
             <button
                 class={['btn btn-primary', { 'loading disabled': submitting }]}
                 onclick={submit}
-                disabled={submitting}
+                disabled={submitting || formElement?.checkValidity()}
             >
                 {#if submitting}
                     <span class="loading-spinner"></span>

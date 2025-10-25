@@ -10,20 +10,18 @@
 
     $effect(() => {
         if (submitting) {
-            form.querySelectorAll('input, textarea, select').forEach(
-                (i) => ((i as HTMLInputElement).disabled = true),
-            );
+            formElement
+                ?.querySelectorAll('input, textarea, select')
+                .forEach((i) => ((i as HTMLInputElement).disabled = true));
         } else {
-            form.querySelectorAll('input, textarea, select').forEach(
-                (i) => ((i as HTMLInputElement).disabled = false),
-            );
+            formElement
+                ?.querySelectorAll('input, textarea, select')
+                .forEach((i) => ((i as HTMLInputElement).disabled = false));
         }
     });
 
-    let form: HTMLFormElement;
-
     export const submit = () => {
-        form.requestSubmit();
+        formElement?.requestSubmit();
     };
 
     let {
@@ -32,6 +30,7 @@
         remoteForm,
         submitting = $bindable(false),
         invalidate = true,
+        formElement = $bindable(undefined),
         ...rest
     }: {
         children: Snippet;
@@ -39,11 +38,12 @@
         submitting?: boolean;
         remoteForm: RemoteFormType;
         invalidate?: boolean;
+        formElement?: HTMLFormElement;
     } & Partial<HTMLFormAttributes> = $props();
 </script>
 
 <form
-    bind:this={form}
+    bind:this={formElement}
     {...remoteForm.enhance(async ({ submit }) => {
         submitting = true;
         try {

@@ -25,7 +25,7 @@
 
         if (file === undefined) return;
 
-        if ((file.size > 104, 857, 600)) {
+        if (file.size > 104857600) {
             fileInput?.setCustomValidity(
                 'File size too big: must be less than 100mb',
             );
