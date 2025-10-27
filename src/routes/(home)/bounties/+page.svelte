@@ -42,6 +42,9 @@
 
         return '';
     }
+
+    const today = new Date();
+    const todayMin = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 </script>
 
 <div class=" max-w-[1000px] w-[80%] my-7">
@@ -168,6 +171,7 @@
             name="deadline"
             required
             type="date"
+            min={todayMin}
             value={threeDaysLaterValue}
         />
     </label>

@@ -46,7 +46,7 @@ export const createBountyForm = form(v.object({
     title: v.pipe(v.string(), v.nonEmpty(), v.maxLength(40)),
     fulfillmentCriteria: v.pipe(v.string(), v.nonEmpty()),
     reward: v.pipe(v.string(), v.nonEmpty(), v.transform(Number), v.integer()),
-    deadline: v.pipe(v.string(), v.nonEmpty(), v.isoDate(), v.transform(s => new Date(s)))
+    deadline: v.pipe(v.string(), v.nonEmpty(), v.isoDate(), v.transform(s => new Date(s)), v.gtValue(new Date()))
 }), async ({ title, fulfillmentCriteria, deadline, reward }) => {
 
     try {

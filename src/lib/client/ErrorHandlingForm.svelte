@@ -2,11 +2,13 @@
     lang="ts"
     generics="RemoteFormType extends RemoteForm<any, undefined | { error: string } | { value: unknown }> | Omit<RemoteForm<any, undefined | { error: string } | { value: unknown }>, 'for'>"
 >
-    import type { Snippet } from 'svelte';
+    import { type Snippet } from 'svelte';
     import type { HTMLFormAttributes } from 'svelte/elements';
     import { errorState } from './status';
     import type { RemoteForm } from '@sveltejs/kit';
     import { invalidateAll } from '$app/navigation';
+
+    let formElement: HTMLFormElement;
 
     $effect(() => {
         if (submitting) {
@@ -29,21 +31,26 @@
         postSubmit,
         remoteForm,
         submitting = $bindable(false),
+        valid = $bindable(false),
         invalidate = true,
-        formElement = $bindable(undefined),
         ...rest
     }: {
         children: Snippet;
         postSubmit?: () => void;
         submitting?: boolean;
         remoteForm: RemoteFormType;
+        valid?: boolean;
         invalidate?: boolean;
-        formElement?: HTMLFormElement;
     } & Partial<HTMLFormAttributes> = $props();
+
+    const updateValidity = () => {
+        valid = formElement.checkValidity();
+    };
 </script>
 
 <form
     bind:this={formElement}
+    onchange={updateValidity}
     {...remoteForm.enhance(async ({ submit }) => {
         submitting = true;
         try {

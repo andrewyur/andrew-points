@@ -5,7 +5,7 @@
     import type { Snippet } from 'svelte';
     import type { HTMLFormAttributes } from 'svelte/elements';
     import ErrorHandlingForm from './ErrorHandlingForm.svelte';
-    import type { RemoteFormInput, RemoteForm } from '@sveltejs/kit';
+    import type { RemoteForm } from '@sveltejs/kit';
 
     const {
         header,
@@ -20,11 +20,10 @@
         actionText?: string;
     } & Partial<HTMLFormAttributes> = $props();
 
-    let formElement: HTMLFormElement | undefined = $state();
-
     let modal: HTMLDialogElement | null = $state(null);
     let form: ErrorHandlingForm<RemoteFormType> | null = $state(null);
     let submitting = $state(false);
+    let valid = $state(false);
 
     export const show = () => modal?.showModal();
     export const submit = () => {
@@ -45,8 +44,8 @@
         <ErrorHandlingForm
             class="p-3 flex flex-col items-center gap-4"
             bind:submitting
+            bind:valid
             bind:this={form}
-            bind:formElement
             {remoteForm}
             {...rest}
             {children}
@@ -59,7 +58,7 @@
             <button
                 class={['btn btn-primary', { 'loading disabled': submitting }]}
                 onclick={submit}
-                disabled={submitting || formElement?.checkValidity()}
+                disabled={submitting || !valid}
             >
                 {#if submitting}
                     <span class="loading-spinner"></span>

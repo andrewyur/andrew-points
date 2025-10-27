@@ -1,4 +1,4 @@
-import { db } from "$lib/server/db";
+import { db, runTransaction } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
 import { createTransaction } from "$lib/server/points";
 import { eq, sql } from "drizzle-orm";
@@ -18,9 +18,9 @@ export async function getEarnSessionFromUser(userId: string) {
 }
 
 export async function completeEarnSessionFromUser(userId: string) {
-    return await db.transaction(async (tx) => {
-        const [session] = await tx.update(table.earnSession).set({ completed: true }).where(eq(table.earnSession.userId, userId)).returning()
-        await createTransaction(userId, session.payout, { type: `earn_payout#${session.type}` }, tx)
+    return await runTransaction(async () => {
+        const [session] = await db.update(table.earnSession).set({ completed: true }).where(eq(table.earnSession.userId, userId)).returning()
+        await createTransaction(userId, session.payout, { type: `earn_payout#${session.type}` },)
         return session
     })
 }

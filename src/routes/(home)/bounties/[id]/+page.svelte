@@ -20,6 +20,8 @@
     let submissionForm: GeneralFormDialog<typeof createSubmissionForm>;
     let fileInput: HTMLInputElement | null = $state(null);
 
+    let validationMessage = $state('');
+
     async function validateMedia() {
         const file = fileInput?.files?.[0];
 
@@ -29,7 +31,6 @@
             fileInput?.setCustomValidity(
                 'File size too big: must be less than 100mb',
             );
-            return;
         }
 
         const hash = await computeFileHash(file);
@@ -42,6 +43,7 @@
             fileInput?.setCustomValidity('');
         }
 
+        validationMessage = fileInput?.validationMessage ?? '';
         console.log(fileInput?.validationMessage);
     }
 
@@ -198,5 +200,5 @@
         onchange={validateMedia}
         bind:this={fileInput}
     />
-    <div class="validator-hint">{fileInput?.validationMessage}</div>
+    <div class="validator-hint">{validationMessage}</div>
 </GeneralFormDialog>

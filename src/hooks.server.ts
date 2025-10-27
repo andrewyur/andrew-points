@@ -1,7 +1,20 @@
 import type { Handle } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
+import { db } from '$lib/server/db';
+import { eq } from 'drizzle-orm';
+import * as table from "$lib/server/db/schema"
 
 const handleAuth: Handle = async ({ event, resolve }) => {
+	if (import.meta.env.DEV) {
+		const adminUser = await db.query.user.findFirst({
+			where: eq(table.user.admin, true)
+		})
+
+		event.locals.user = adminUser!;
+		return resolve(event);
+	}
+
+
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 
 	if (!sessionToken) {

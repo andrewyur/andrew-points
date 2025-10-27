@@ -23,6 +23,9 @@
     let modal: HTMLDialogElement;
     let form: ErrorHandlingForm<RemoteFormType>;
 
+    let valid = $state(false);
+    let submitting = $state(false);
+
     $effect(() => {
         if (activeElement !== null) {
             modal.showModal();
@@ -41,6 +44,8 @@
     {@render header?.()}
     <ErrorHandlingForm
         bind:this={form}
+        bind:valid
+        bind:submitting
         {remoteForm}
         {...rest}
         {children}

@@ -1,4 +1,4 @@
-import { db } from "$lib/server/db";
+import { db, runTransaction } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
 import { createTransaction } from "$lib/server/points";
 import { and, eq, not } from "drizzle-orm";
@@ -54,8 +54,8 @@ export async function getSubmissionById(submissionId: string) {
 }
 
 export async function createBounty(creatorId: string, title: string, fulfillmentCriteria: string, deadline: Date, reward: number): Promise<table.Bounty> {
-    return await db.transaction(async (tx) => {
-        const [bounty] = await tx.insert(table.bounty).values({
+    return await runTransaction(async () => {
+        const [bounty] = await db.insert(table.bounty).values({
             creatorId,
             title,
             fulfillmentCriteria,
@@ -66,7 +66,7 @@ export async function createBounty(creatorId: string, title: string, fulfillment
         await createTransaction(creatorId, -reward, {
             type: "bounty_escrow",
             bountyId: bounty.id
-        }, tx)
+        })
 
         return bounty
     })
@@ -74,14 +74,14 @@ export async function createBounty(creatorId: string, title: string, fulfillment
 
 
 export async function createBountySubmission(submitterId: string, bountyId: string, file: File): Promise<table.BountySubmission> {
-    return await db.transaction(async (tx) => {
-        const media = await createMedia(file, tx)
-        const [record] = await tx.insert(table.bountySubmission).values({
+    return await runTransaction(async () => {
+        const media = await createMedia(file)
+        const [record] = await db.insert(table.bountySubmission).values({
             bountyId,
             submitterId,
             mediaHash: media.hash,
         }).returning().catch(async (e) => {
-            await deleteMedia(media.hash, tx)
+            await deleteMedia(media.hash)
             throw e
         });
         return record
@@ -89,12 +89,12 @@ export async function createBountySubmission(submitterId: string, bountyId: stri
 }
 
 export async function deleteBountySubmission(submissionId: string) {
-    db.transaction(async tx => {
-        const [submission] = await tx
+    await runTransaction(async () => {
+        const [submission] = await db
             .delete(table.bountySubmission)
             .where(eq(table.bountySubmission.id, submissionId))
             .returning()
-        await deleteMedia(submission.mediaHash, tx)
+        await deleteMedia(submission.mediaHash)
     })
 }
 

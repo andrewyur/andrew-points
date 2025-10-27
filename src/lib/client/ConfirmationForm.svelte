@@ -10,6 +10,9 @@
     let dialog: HTMLDialogElement;
     let form: ErrorHandlingForm<RemoteFormType>;
 
+    let valid = $state(false);
+    let submitting = $state(false);
+
     let {
         children,
         formContents,
@@ -33,8 +36,6 @@
         });
     }
 
-    let submitting = $state(false);
-
     export const show = () => dialog.showModal();
     export const close = () => {
         dialog.close();
@@ -44,6 +45,8 @@
 
 <ErrorHandlingForm
     bind:this={form}
+    bind:submitting
+    bind:valid
     {...rest}
     {remoteForm}
     children={formContents}
@@ -58,8 +61,8 @@
         <div class="modal-action flex flex-row justify-between">
             <button class="btn" onclick={close}>Cancel</button>
             <button
-                class={['btn btn-primary', { 'loading disabled': submitting }]}
-                disabled={submitting}
+                class={['btn btn-primary', { loading: submitting }]}
+                disabled={submitting || !valid}
                 onclick={() => {
                     form.submit();
                     close();

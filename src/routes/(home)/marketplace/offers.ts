@@ -1,4 +1,4 @@
-import { db } from "$lib/server/db";
+import { db, runTransaction } from "$lib/server/db";
 import * as table from "$lib/server/db/schema"
 import { createTransaction } from "$lib/server/points";
 import { and, eq, isNull, not } from "drizzle-orm";
@@ -52,8 +52,8 @@ export async function deleteOffer(id: string) {
 export async function buyOffer(userId: string, buyerId: string) {
     const threeDays = Temporal.Now.zonedDateTimeISO('UTC').add({ days: 3 })
 
-    await db.transaction(async (tx) => {
-        const [offer] = await tx.update(table.offer).set({
+    await runTransaction(async () => {
+        const [offer] = await db.update(table.offer).set({
             state: "pending",
             purchasedAt: new Date(),
             completeBy: new Date(threeDays.epochMilliseconds),
@@ -63,7 +63,7 @@ export async function buyOffer(userId: string, buyerId: string) {
         await createTransaction(buyerId, -offer.cost, {
             type: "offer_escrow",
             offerId: offer.id
-        }, tx)
+        })
     })
 
 }
