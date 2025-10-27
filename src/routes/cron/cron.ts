@@ -22,7 +22,7 @@ async function checkOfferExpirations() {
     await runTransaction(async () => {
         const offers = await db.update(table.offer).set({
             state: "completed"
-        }).where(and(lt(table.offer.completeBy, new Date()), eq(table.offer.state !== "completed"))).returning()
+        }).where(and(lt(table.offer.completeBy, new Date()), not(eq(table.offer.state, "completed")))).returning()
 
         for (const offer of offers) {
             await createTransaction(offer.posterId, offer.cost, { type: "offer_payout", offerId: offer.id })
