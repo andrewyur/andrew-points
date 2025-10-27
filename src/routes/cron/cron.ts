@@ -14,14 +14,6 @@ async function checkBountyExpirations() {
             await createTransaction(bounty.creatorId, bounty.reward, { type: "bounty_refund", bountyId: bounty.id })
             await createNotification(bounty.creatorId, { type: "bounty_expired", bountyId: bounty.id })
         }
-
-        db.insert(table.user).values({
-            discordId: "testing",
-            displayName: "testing",
-            username: "testing"
-        })
-
-        throw Error("test")
     })
 
 }
