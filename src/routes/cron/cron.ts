@@ -2,13 +2,13 @@ import { db, runTransaction } from "$lib/server/db";
 import * as table from "$lib/server/db/schema";
 import { createNotification } from "$lib/server/notifications";
 import { createTransaction } from "$lib/server/points";
-import { lt } from "drizzle-orm";
+import { and, eq, lt, not } from "drizzle-orm";
 
 async function checkBountyExpirations() {
     await runTransaction(async () => {
         const bounties = await db.update(table.bounty).set({
             completed: true
-        }).where(lt(table.bounty.deadline, new Date())).returning()
+        }).where(and(lt(table.bounty.deadline, new Date()), not(table.bounty.completed))).returning()
 
         for (const bounty of bounties) {
             await createTransaction(bounty.creatorId, bounty.reward, { type: "bounty_refund", bountyId: bounty.id })
@@ -22,7 +22,7 @@ async function checkOfferExpirations() {
     await runTransaction(async () => {
         const offers = await db.update(table.offer).set({
             state: "completed"
-        }).where(lt(table.offer.completeBy, new Date())).returning()
+        }).where(and(lt(table.offer.completeBy, new Date()), eq(table.offer.state !== "completed"))).returning()
 
         for (const offer of offers) {
             await createTransaction(offer.posterId, offer.cost, { type: "offer_payout", offerId: offer.id })
