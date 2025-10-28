@@ -34,7 +34,7 @@
             {#if ledgerEntry.bounty}
                 <a
                     class=" flex flex-row gap-1 items-center"
-                    href="/bounty/{ledgerEntry.bounty.id}"
+                    href="/bounties/{ledgerEntry.bounty.id}"
                     ><p class="link font-semibold text-xl not-lg:text-lg">
                         Bounty: {ledgerEntry.bounty.title}
                     </p>
@@ -68,7 +68,7 @@
             {#if ledgerEntry.offer && ledgerEntry.offer.visibleTo === null}
                 <a
                     class="link font-semibold text-xl not-lg:text-lg"
-                    href="/bounty/{ledgerEntry.offer.id}"
+                    href="/marketplace/{ledgerEntry.offer.id}"
                     >Offer: {ledgerEntry.offer.title}</a
                 >
                 <div hidden={!showUser}>
